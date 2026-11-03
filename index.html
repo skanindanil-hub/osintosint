@@ -9,15 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #ffffff; /* Белый фон */
+            --bg: #ffffff;
             --text: #111827;
             --text-muted: #6b7280;
             --input-bg: #f9fafb;
             --border: #e5e7eb;
-            --accent: #2563eb; /* Синий акцент */
+            --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --terminal-bg: #ffffff;
             --terminal-border: #e5e7eb;
+            --modal-bg: rgba(0,0,0,0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,12 +38,14 @@
 
         .top-bar {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             display: flex;
             justify-content: flex-end;
+            align-items: center;
             gap: 10px;
             margin-bottom: 50px;
             animation: fadeInDown 0.8s ease;
+            flex-wrap: wrap;
         }
 
         .btn-top {
@@ -58,6 +61,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
         }
 
         .btn-top:hover {
@@ -65,6 +69,17 @@
             color: var(--text);
             background: #fff;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-accent {
+            background: #eff6ff;
+            color: var(--accent);
+            border-color: #bfdbfe;
+        }
+
+        .btn-accent:hover {
+            background: #dbeafe;
+            color: var(--accent-hover);
         }
 
         .main-container {
@@ -112,7 +127,6 @@
             margin-bottom: 10px;
         }
 
-        /* Табы */
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -145,7 +159,6 @@
             border-color: #bfdbfe;
         }
 
-        /* Строка поиска */
         .search-wrapper {
             position: relative;
             width: 100%;
@@ -238,7 +251,6 @@
             font-weight: 500;
         }
 
-        /* Лоадер */
         .loader {
             display: none;
             flex-direction: column;
@@ -259,7 +271,6 @@
             animation: spin 1s linear infinite;
         }
 
-        /* Блок результатов */
         .results-container {
             display: none;
             width: 100%;
@@ -300,7 +311,6 @@
         .result-content::-webkit-scrollbar-track { background: #f1f1f1; }
         .result-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
-        /* Стилизация тегов */
         .tg-bold { color: #000; font-weight: bold; }
         .tg-code { background: #f3f4f6; color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb;}
         .tg-blockquote { 
@@ -313,19 +323,156 @@
             border-radius: 0 8px 8px 0;
         }
 
+        /* --- Модальное окно покупки --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-bg);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: #f3f4f6;
+            border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .tariffs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tariff-btn {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        .tariff-btn:hover {
+            border-color: var(--accent);
+            background: #eff6ff;
+        }
+
+        .tariff-price {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .payment-info {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .payment-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .wallet-address {
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .btn-pay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-pay:hover {
+            background: var(--accent-hover);
+        }
+
         /* Анимации */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
     <div class="top-bar">
-        <a href="https://t.me/ListopadovSearchBot" class="btn-top">💎 Купить запросы</a>
+        <button class="btn-top btn-accent" onclick="openBuyModal()">💎 Купить запросы</button>
         <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ listopadov</a>
+        <a href="https://t.me/panarchist" class="btn-top" target="_blank">✈️ panarchist</a>
     </div>
 
+    <!-- Основной контент -->
     <div class="main-container">
         <div class="logo-icon">🕷️</div>
         
@@ -333,6 +480,7 @@
         
         <p class="subtitle">Автоматический поиск по 900+ инструментам</p>
 
+        <!-- Табы -->
         <div class="tabs">
             <button class="tab active" onclick="setType('phone', 'Введите номер телефона', event)">Телефон</button>
             <button class="tab" onclick="setType('telegram', 'Введите @username', event)">Telegram</button>
@@ -360,12 +508,14 @@
         </div>
     </div>
 
+    <!-- Лоадер -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
         <span>Инициализация сканера...</span>
         <span style="font-size: 12px; color: #9ca3af;" id="loader-status">Соединение с сервером</span>
     </div>
 
+    <!-- Блок результатов -->
     <div class="results-container" id="results-container">
         <div class="result-header">
             <span id="res-query">Запрос: ...</span>
@@ -374,11 +524,49 @@
         <div class="result-content" id="result-content"></div>
     </div>
 
+    <!-- Модальное окно покупки -->
+    <div class="modal-overlay" id="buy-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeBuyModal()">✕</button>
+            <h2 class="modal-title">Покупка запросов</h2>
+            <p class="modal-subtitle">Выберите пакет для пополнения баланса</p>
+            
+            <div class="tariffs">
+                <button class="tariff-btn" onclick="showPayment(10, 0.3)">
+                    <span>10 запросов</span>
+                    <span class="tariff-price">0.30 TON</span>
+                </button>
+                <button class="tariff-btn" onclick="showPayment(50, 1.5)">
+                    <span>50 запросов</span>
+                    <span class="tariff-price">1.50 TON</span>
+                </button>
+                <button class="tariff-btn" onclick="showPayment(100, 2.5)">
+                    <span>100 запросов</span>
+                    <span class="tariff-price">2.50 TON</span>
+                </button>
+                <button class="tariff-btn" onclick="showPayment(1000, 20.0)">
+                    <span>1000 запросов</span>
+                    <span class="tariff-price">20.0 TON</span>
+                </button>
+            </div>
+
+            <div class="payment-info" id="payment-info">
+                <p>Переведите указанную сумму на кошелек:</p>
+                <div class="wallet-address" id="wallet-address">UQA7k7FbUJXC1ko40uBYfvv-jZ4WGnEiEIVsFcffXtFOU3pM</div>
+                <a href="#" id="tonkeeper-link" class="btn-pay" target="_blank">
+                    🚀 Открыть TONKEEPER
+                </a>
+                <p style="margin-top: 15px; font-size: 12px; text-align: center;">
+                    После оплаты отправьте хеш транзакции в <a href="https://t.me/ListopadovSearchBot" style="color: var(--accent);">Telegram-бот</a>, чтобы запросы зачислились на баланс.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = "https://listopadov-search-1.onrender.com/api/search";
-
-        // ID твоего бота для проверки лимитов (опционально)
         const BOT_URL = "https://t.me/ListopadovSearchBot";
+        const WALLET = "UQA7k7FbUJXC1ko40uBYfvv-jZ4WGnEiEIVsFcffXtFOU3pM";
 
         let currentType = 'phone';
         const inputEl = document.getElementById('search-input');
@@ -390,7 +578,7 @@
         const resQuery = document.getElementById('res-query');
         const resTime = document.getElementById('res-time');
 
-        // Проверяем лимит локально (3 запроса)
+        // Лимит запросов (стартует с 3)
         let localLimit = localStorage.getItem('oasis_limit');
         if (localLimit === null) {
             localLimit = 3;
@@ -408,10 +596,10 @@
             const query = inputEl.value.trim();
             if (!query) return;
 
-            // Проверка лимита перед отправкой
+            // Проверка лимита
             if (parseInt(localLimit) <= 0) {
-                alert("У вас закончились бесплатные запросы. Перейдите в Telegram-бот, чтобы купить еще.");
-                window.location.href = BOT_URL;
+                alert("У вас закончились запросы. Купите их или перейдите в Telegram-бот.");
+                openBuyModal();
                 return;
             }
 
@@ -468,6 +656,30 @@
 
         inputEl.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') submitSearch();
+        });
+
+        // --- Логика модального окна покупки ---
+        function openBuyModal() {
+            document.getElementById('buy-modal').style.display = 'flex';
+            document.getElementById('payment-info').style.display = 'none';
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buy-modal').style.display = 'none';
+        }
+
+        function showPayment(amount, price) {
+            document.getElementById('payment-info').style.display = 'block';
+            const nanoAmount = price * 1000000000;
+            document.getElementById('tonkeeper-link').href = `ton://transfer/${WALLET}?amount=${nanoAmount}`;
+            
+            // Обновляем текст в зависимости от выбора
+            document.querySelector('#payment-info p').innerHTML = `Переведите <b>${price} TON</b> за ${amount} запросов на кошелек:`;
+        }
+
+        // Закрытие по клику вне окна
+        document.getElementById('buy-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeBuyModal();
         });
     </script>
 </body>
