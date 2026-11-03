@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oasis Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #ffffff;
+            --text-muted: #8a8a8a;
+            --input-bg: #161616;
+            --border: #2a2a2a;
+            --accent: #3b82f6; /* Синий цвет кнопки */
+            --tab-bg: #1a1a1a;
+            --tab-active: #2a2a2a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-top {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-top:hover {
+            background: var(--tab-active);
+            color: var(--text);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .badge-beta {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: var(--tab-active);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 16px 60px 16px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #444;
+        }
+
+        .search-input::placeholder {
+            color: #555;
+        }
+
+        .submit-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #2563eb;
+        }
+
+        .submit-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .bottom-info {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .bottom-info a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .bottom-info a:hover {
+            color: var(--text-muted);
+        }
+
+        .bottom-info .telegram-link {
+            color: #3b82f6;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="#" class="btn-top">Подписка</a>
+        <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ véxed listopadov</a>
+    </div>
+
+    <div class="main-container">
+        <div class="logo-icon">🕷️</div>
+        
+        <h1>oasisserver.lol <span class="badge-beta">BETA</span></h1>
+        
+        <p class="subtitle">Автоматический поиск по 900+ инструментам</p>
+
+        <!-- Переключатели типов -->
+        <div class="tabs">
+            <button class="tab active" onclick="setType('phone', 'Введите номер телефона')">Телефон</button>
+            <button class="tab" onclick="setType('telegram', 'Введите @username или Telegram ID')">Telegram</button>
+            <button class="tab" onclick="setType('vk', 'Введите ссылку на VK')">VK</button>
+            <button class="tab" onclick="setType('name', 'Введите ФИО')">ФИО</button>
+            <button class="tab" onclick="setType('auto', 'Введите номер авто или VIN')">Авто/VIN</button>
+            <button class="tab" onclick="setType('email', 'Введите Email')">Email</button>
+        </div>
+
+        <!-- Поле ввода -->
+        <div class="search-wrapper">
+            <input type="text" id="search-input" class="search-input" placeholder="Введите номер телефона">
+            <button class="submit-btn" onclick="submitSearch()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="bottom-info">
+            <span>Лимит: 10 из 10 oct. (5ч)</span>
+            <div>
+                <a href="#">Правила использования</a> • 
+                <a href="https://t.me/ListopadovSearchBot" class="telegram-link">✈️ Telegram-канал</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentType = 'phone';
+        const inputEl = document.getElementById('search-input');
+
+        function setType(type, placeholder) {
+            currentType = type;
+            inputEl.placeholder = placeholder;
+            
+            // Меняем активную вкладку
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function submitSearch() {
+            const query = inputEl.value.trim();
+            if (!query) return;
+            
+            // В будущем здесь можно отправлять данные на API, 
+            // но сейчас мы просто перекидываем в Telegram-бота
+            // Формат: t.me/ListopadovSearchBot?start=ЗАПРОС
+            // В боте это обрабатывается командой /start и можно передать аргумент
+            
+            const botUrl = `https://t.me/ListopadovSearchBot?start=${encodeURIComponent(query)}`;
+            window.location.href = botUrl;
+        }
+
+        // Отправка по Enter
+        inputEl.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                submitSearch();
+            }
+        });
+    </script>
+</body>
+</html>
