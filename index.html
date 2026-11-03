@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oasis Search</title>
+    <title>Oasis Search | OSINT</title>
+    <meta name="description" content="Автоматический поиск информации по открытым источникам. 900+ инструментов в одном месте.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
             --text: #ffffff;
-            --text-muted: #8a8a8a;
-            --input-bg: #161616;
-            --border: #2a2a2a;
-            --accent: #3b82f6; /* Синий цвет кнопки */
-            --tab-bg: #1a1a1a;
-            --tab-active: #2a2a2a;
+            --text-muted: #888888;
+            --input-bg: #111111;
+            --border: #222222;
+            --accent: #00d2ff;
+            --accent-hover: #00a2c7;
+            --terminal-bg: #0a0a0a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,16 +30,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.05), transparent 50%);
+            background-repeat: no-repeat;
         }
 
+        /* Верхняя панель */
         .top-bar {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            width: 100%;
+            max-width: 800px;
             display: flex;
+            justify-content: flex-end;
             gap: 10px;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
         }
 
         .btn-top {
@@ -50,13 +56,19 @@
             font-size: 12px;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.2s;
-        }
-        .btn-top:hover {
-            background: var(--tab-active);
-            color: var(--text);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
+        .btn-top:hover {
+            border-color: #444;
+            color: var(--text);
+            background: #1a1a1a;
+        }
+
+        /* Основной контент */
         .main-container {
             width: 100%;
             max-width: 600px;
@@ -65,16 +77,18 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
+            animation: fadeInUp 0.8s ease;
         }
 
         .logo-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-            opacity: 0.8;
+            font-size: 48px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3));
+            animation: float 3s ease-in-out infinite;
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -83,55 +97,60 @@
         }
 
         .badge-beta {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--accent);
             font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(0, 210, 255, 0.2);
         }
 
         p.subtitle {
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 15px;
             margin-bottom: 10px;
         }
 
+        /* Табы (переключатели) */
         .tabs {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 10px;
         }
 
         .tab {
             background: transparent;
             color: var(--text-muted);
-            border: none;
-            padding: 6px 14px;
-            border-radius: 16px;
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 20px;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             font-family: inherit;
+            font-weight: 500;
         }
 
         .tab:hover {
             color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .tab.active {
-            background: var(--tab-active);
+            background: var(--input-bg);
             color: var(--text);
-            font-weight: 500;
+            border-color: var(--border);
         }
 
+        /* Строка поиска */
         .search-wrapper {
             position: relative;
             width: 100%;
-            margin-top: 5px;
+            margin-top: 10px;
         }
 
         .search-input {
@@ -139,16 +158,16 @@
             background: var(--input-bg);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 16px 60px 16px 20px;
-            border-radius: 12px;
-            font-size: 15px;
+            padding: 18px 60px 18px 24px;
+            border-radius: 16px;
+            font-size: 16px;
             outline: none;
-            font-family: inherit;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .search-input:focus {
-            border-color: #444;
+            border-color: rgba(0, 210, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
         }
 
         .search-input::placeholder {
@@ -157,137 +176,307 @@
 
         .submit-btn {
             position: absolute;
-            right: 8px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             background: var(--accent);
             border: none;
-            border-radius: 8px;
-            color: white;
+            border-radius: 12px;
+            color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
         .submit-btn:hover {
-            background: #2563eb;
+            background: var(--accent-hover);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .submit-btn:disabled {
+            background: #333;
+            cursor: wait;
+            transform: translateY(-50%);
         }
 
         .submit-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: none;
+            width: 20px;
+            height: 20px;
             stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+            stroke-width: 2.5;
+            fill: none;
         }
 
+        /* Информация внизу */
         .bottom-info {
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 12px;
             color: #555;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         .bottom-info a {
             color: #555;
             text-decoration: none;
-            transition: color 0.2s;
+            transition: color 0.3s;
         }
 
         .bottom-info a:hover {
-            color: var(--text-muted);
+            color: var(--accent);
         }
 
         .bottom-info .telegram-link {
-            color: #3b82f6;
+            color: var(--accent);
             display: inline-flex;
             align-items: center;
             gap: 4px;
         }
 
+        /* Блок загрузки */
+        .loader {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 210, 255, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Блок результатов */
+        .results-container {
+            display: none;
+            width: 100%;
+            margin-top: 30px;
+            background: var(--terminal-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .result-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #d1d5db;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* Скроллбар для результатов */
+        .result-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .result-content::-webkit-scrollbar-track {
+            background: var(--terminal-bg);
+        }
+        .result-content::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        .result-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Стилизация тегов внутри результата */
+        .tg-bold { color: #fff; font-weight: bold; }
+        .tg-code { background: #1a1a1a; color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid #333;}
+        .tg-blockquote { 
+            border-left: 3px solid var(--accent); 
+            padding-left: 12px; 
+            margin: 10px 0; 
+            color: #9ca3af; 
+            background: rgba(0, 210, 255, 0.05);
+            padding: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Анимации */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
     <div class="top-bar">
-        <a href="#" class="btn-top">Подписка</a>
-        <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ véxed listopadov</a>
+        <a href="#" class="btn-top">💎 Подписка</a>
+        <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ listopadov</a>
     </div>
 
+    <!-- Основной контент -->
     <div class="main-container">
         <div class="logo-icon">🕷️</div>
         
-        <h1>oasisserver.lol <span class="badge-beta">BETA</span></h1>
+        <h1>Oasis Search <span class="badge-beta">BETA</span></h1>
         
         <p class="subtitle">Автоматический поиск по 900+ инструментам</p>
 
-        <!-- Переключатели типов -->
+        <!-- Табы -->
         <div class="tabs">
-            <button class="tab active" onclick="setType('phone', 'Введите номер телефона')">Телефон</button>
-            <button class="tab" onclick="setType('telegram', 'Введите @username или Telegram ID')">Telegram</button>
-            <button class="tab" onclick="setType('vk', 'Введите ссылку на VK')">VK</button>
-            <button class="tab" onclick="setType('name', 'Введите ФИО')">ФИО</button>
-            <button class="tab" onclick="setType('auto', 'Введите номер авто или VIN')">Авто/VIN</button>
-            <button class="tab" onclick="setType('email', 'Введите Email')">Email</button>
+            <button class="tab active" onclick="setType('phone', 'Введите номер телефона', event)">Телефон</button>
+            <button class="tab" onclick="setType('telegram', 'Введите @username или Telegram ID', event)">Telegram</button>
+            <button class="tab" onclick="setType('vk', 'Введите ссылку на VK', event)">VK</button>
+            <button class="tab" onclick="setType('name', 'Введите ФИО', event)">ФИО</button>
+            <button class="tab" onclick="setType('auto', 'Введите номер авто или VIN', event)">Авто/VIN</button>
+            <button class="tab" onclick="setType('email', 'Введите Email', event)">Email</button>
         </div>
 
         <!-- Поле ввода -->
         <div class="search-wrapper">
             <input type="text" id="search-input" class="search-input" placeholder="Введите номер телефона">
-            <button class="submit-btn" onclick="submitSearch()">
-                <svg viewBox="0 0 24 24">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+            <button class="submit-btn" id="submit-btn" onclick="submitSearch()">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
         </div>
 
         <div class="bottom-info">
-            <span>Лимит: 10 из 10 oct. (5ч)</span>
+            <span>Лимит: 10 из 10 запросов</span>
             <div>
                 <a href="#">Правила использования</a> • 
-                <a href="https://t.me/ListopadovSearchBot" class="telegram-link">✈️ Telegram-канал</a>
+                <a href="https://t.me/ListopadovSearchBot" class="telegram-link">✈️ Telegram-бот</a>
             </div>
         </div>
     </div>
 
+    <!-- Индикатор загрузки -->
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <span>Инициализация сканера...</span>
+        <span style="font-size: 12px; color: #666;" id="loader-status">Соединение с сервером</span>
+    </div>
+
+    <!-- Блок результатов -->
+    <div class="results-container" id="results-container">
+        <div class="result-header">
+            <span id="res-query">Запрос: ...</span>
+            <span id="res-time">...</span>
+        </div>
+        <div class="result-content" id="result-content"></div>
+    </div>
+
     <script>
+        // ⚠️ ВАЖНО: ТУТ ССЫЛКА НА ТВОЙ RENDER
+        // Если Render засыпает, первый запрос может занять до 50 секунд.
+        const API_URL = "https://listopadov-search-1.onrender.com/api/search";
+
         let currentType = 'phone';
         const inputEl = document.getElementById('search-input');
+        const btnEl = document.getElementById('submit-btn');
+        const loaderEl = document.getElementById('loader');
+        const loaderStatus = document.getElementById('loader-status');
+        const resultsContainer = document.getElementById('results-container');
+        const resultContent = document.getElementById('result-content');
+        const resQuery = document.getElementById('res-query');
+        const resTime = document.getElementById('res-time');
 
-        function setType(type, placeholder) {
+        function setType(type, placeholder, event) {
             currentType = type;
             inputEl.placeholder = placeholder;
-            
-            // Меняем активную вкладку
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
         }
 
-        function submitSearch() {
+        async function submitSearch() {
             const query = inputEl.value.trim();
             if (!query) return;
+
+            // Сброс предыдущих результатов
+            resultsContainer.style.display = 'none';
+            loaderEl.style.display = 'flex';
+            btnEl.disabled = true;
             
-            // В будущем здесь можно отправлять данные на API, 
-            // но сейчас мы просто перекидываем в Telegram-бота
-            // Формат: t.me/ListopadovSearchBot?start=ЗАПРОС
-            // В боте это обрабатывается командой /start и можно передать аргумент
-            
-            const botUrl = `https://t.me/ListopadovSearchBot?start=${encodeURIComponent(query)}`;
-            window.location.href = botUrl;
+            // Эмуляция статусов загрузки
+            let statuses = [
+                "Соединение с сервером...", 
+                "Поиск в базе Mobius...", 
+                "Поиск в базе LEGO...", 
+                "Поиск в базе DevHydra...",
+                "Анализ утечек...",
+                "Формирование отчета..."
+            ];
+            let statusIndex = 0;
+            const statusInterval = setInterval(() => {
+                loaderStatus.innerText = statuses[statusIndex % statuses.length];
+                statusIndex++;
+            }, 3000);
+
+            const startTime = Date.now();
+
+            try {
+                // Отправка запроса на Render
+                const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                clearInterval(statusInterval);
+
+                if (data.error) {
+                    alert(data.error);
+                    loaderEl.style.display = 'none';
+                    btnEl.disabled = false;
+                    return;
+                }
+
+                // Форматируем ответ бота (превращаем теги в красивый HTML)
+                let formattedHtml = data.result
+                    .replace(/<b>(.*?)<\/b>/g, '<span class="tg-bold">$1</span>')
+                    .replace(/<code>(.*?)<\/code>/g, '<span class="tg-code">$1</span>')
+                    .replace(/<blockquote>(.*?)<\/blockquote>/gs, '<div class="tg-blockquote">$1</div>')
+                    .replace(/\n/g, '<br>');
+
+                // Вывод данных
+                resultContent.innerHTML = formattedHtml;
+                resQuery.innerText = `Запрос: ${data.query}`;
+                resTime.innerText = `Успешно за ${((Date.now() - startTime) / 1000).toFixed(1)} сек.`;
+                
+                resultsContainer.style.display = 'block';
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (error) {
+                clearInterval(statusInterval);
+                alert("Ошибка: Сервер не отвечает. Возможно, он перезагружается (Render Free Tier). Попробуйте еще раз через 10 секунд.");
+            } finally {
+                loaderEl.style.display = 'none';
+                btnEl.disabled = false;
+            }
         }
 
-        // Отправка по Enter
+        // Поиск по Enter
         inputEl.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                submitSearch();
-            }
+            if (e.key === 'Enter') submitSearch();
         });
     </script>
 </body>
