@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oasis Search | OSINT</title>
-    <meta name="description" content="Автоматический поиск информации по открытым источникам. 900+ инструментов в одном месте.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050505;
-            --text: #ffffff;
-            --text-muted: #888888;
-            --input-bg: #111111;
-            --border: #222222;
-            --accent: #00d2ff;
-            --accent-hover: #00a2c7;
-            --terminal-bg: #0a0a0a;
+            --bg: #ffffff; /* Белый фон */
+            --text: #111827;
+            --text-muted: #6b7280;
+            --input-bg: #f9fafb;
+            --border: #e5e7eb;
+            --accent: #2563eb; /* Синий акцент */
+            --accent-hover: #1d4ed8;
+            --terminal-bg: #ffffff;
+            --terminal-border: #e5e7eb;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,12 +31,10 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.05), transparent 50%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.05), transparent 50%);
             background-repeat: no-repeat;
         }
 
-        /* Верхняя панель */
         .top-bar {
             width: 100%;
             max-width: 800px;
@@ -53,7 +51,7 @@
             color: var(--text-muted);
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
@@ -63,15 +61,15 @@
         }
 
         .btn-top:hover {
-            border-color: #444;
+            border-color: #ccc;
             color: var(--text);
-            background: #1a1a1a;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* Основной контент */
         .main-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -83,28 +81,29 @@
         .logo-icon {
             font-size: 48px;
             margin-bottom: 5px;
-            filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3));
+            filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.2));
             animation: float 3s ease-in-out infinite;
         }
 
         h1 {
             font-size: 32px;
-            font-weight: 700;
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 10px;
             letter-spacing: -0.5px;
+            color: #000;
         }
 
         .badge-beta {
-            background: rgba(0, 210, 255, 0.1);
+            background: #eff6ff;
             color: var(--accent);
-            font-size: 10px;
+            font-size: 11px;
             padding: 4px 8px;
             border-radius: 6px;
             font-weight: 700;
             letter-spacing: 1px;
-            border: 1px solid rgba(0, 210, 255, 0.2);
+            border: 1px solid #bfdbfe;
         }
 
         p.subtitle {
@@ -113,12 +112,12 @@
             margin-bottom: 10px;
         }
 
-        /* Табы (переключатели) */
+        /* Табы */
         .tabs {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 10px;
         }
 
@@ -130,20 +129,20 @@
             border-radius: 20px;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-family: inherit;
             font-weight: 500;
         }
 
         .tab:hover {
             color: var(--text);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--input-bg);
         }
 
         .tab.active {
-            background: var(--input-bg);
-            color: var(--text);
-            border-color: var(--border);
+            background: #eff6ff;
+            color: var(--accent);
+            border-color: #bfdbfe;
         }
 
         /* Строка поиска */
@@ -166,12 +165,13 @@
         }
 
         .search-input:focus {
-            border-color: rgba(0, 210, 255, 0.5);
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: #fff;
         }
 
         .search-input::placeholder {
-            color: #555;
+            color: #9ca3af;
         }
 
         .submit-btn {
@@ -184,13 +184,12 @@
             background: var(--accent);
             border: none;
             border-radius: 12px;
-            color: #000;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
         }
 
         .submit-btn:hover {
@@ -199,7 +198,7 @@
         }
 
         .submit-btn:disabled {
-            background: #333;
+            background: #9ca3af;
             cursor: wait;
             transform: translateY(-50%);
         }
@@ -212,20 +211,19 @@
             fill: none;
         }
 
-        /* Информация внизу */
         .bottom-info {
             margin-top: 20px;
-            font-size: 12px;
-            color: #555;
+            font-size: 13px;
+            color: var(--text-muted);
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
         .bottom-info a {
-            color: #555;
+            color: var(--text-muted);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.2s;
         }
 
         .bottom-info a:hover {
@@ -237,9 +235,10 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            font-weight: 500;
         }
 
-        /* Блок загрузки */
+        /* Лоадер */
         .loader {
             display: none;
             flex-direction: column;
@@ -254,7 +253,7 @@
         .spinner {
             width: 30px;
             height: 30px;
-            border: 3px solid rgba(0, 210, 255, 0.2);
+            border: 3px solid #eff6ff;
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -266,11 +265,12 @@
             width: 100%;
             margin-top: 30px;
             background: var(--terminal-bg);
-            border: 1px solid var(--border);
+            border: 1px solid var(--terminal-border);
             border-radius: 16px;
             padding: 24px;
             text-align: left;
             animation: fadeInUp 0.5s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
         .result-header {
@@ -289,37 +289,26 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
             line-height: 1.7;
-            color: #d1d5db;
+            color: #374151;
             white-space: pre-wrap;
             word-wrap: break-word;
             max-height: 500px;
             overflow-y: auto;
         }
 
-        /* Скроллбар для результатов */
-        .result-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        .result-content::-webkit-scrollbar-track {
-            background: var(--terminal-bg);
-        }
-        .result-content::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 3px;
-        }
-        .result-content::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+        .result-content::-webkit-scrollbar { width: 6px; }
+        .result-content::-webkit-scrollbar-track { background: #f1f1f1; }
+        .result-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
-        /* Стилизация тегов внутри результата */
-        .tg-bold { color: #fff; font-weight: bold; }
-        .tg-code { background: #1a1a1a; color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid #333;}
+        /* Стилизация тегов */
+        .tg-bold { color: #000; font-weight: bold; }
+        .tg-code { background: #f3f4f6; color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb;}
         .tg-blockquote { 
             border-left: 3px solid var(--accent); 
             padding-left: 12px; 
             margin: 10px 0; 
-            color: #9ca3af; 
-            background: rgba(0, 210, 255, 0.05);
+            color: #4b5563; 
+            background: #f9fafb;
             padding: 10px;
             border-radius: 0 8px 8px 0;
         }
@@ -332,13 +321,11 @@
     </style>
 </head>
 <body>
-    <!-- Верхняя панель -->
     <div class="top-bar">
-        <a href="#" class="btn-top">💎 Подписка</a>
+        <a href="https://t.me/ListopadovSearchBot" class="btn-top">💎 Купить запросы</a>
         <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ listopadov</a>
     </div>
 
-    <!-- Основной контент -->
     <div class="main-container">
         <div class="logo-icon">🕷️</div>
         
@@ -346,17 +333,18 @@
         
         <p class="subtitle">Автоматический поиск по 900+ инструментам</p>
 
-        <!-- Табы -->
         <div class="tabs">
             <button class="tab active" onclick="setType('phone', 'Введите номер телефона', event)">Телефон</button>
-            <button class="tab" onclick="setType('telegram', 'Введите @username или Telegram ID', event)">Telegram</button>
+            <button class="tab" onclick="setType('telegram', 'Введите @username', event)">Telegram</button>
             <button class="tab" onclick="setType('vk', 'Введите ссылку на VK', event)">VK</button>
             <button class="tab" onclick="setType('name', 'Введите ФИО', event)">ФИО</button>
-            <button class="tab" onclick="setType('auto', 'Введите номер авто или VIN', event)">Авто/VIN</button>
+            <button class="tab" onclick="setType('auto', 'Введите номер авто', event)">Авто/VIN</button>
             <button class="tab" onclick="setType('email', 'Введите Email', event)">Email</button>
+            <button class="tab" onclick="setType('inn', 'Введите ИНН (10 или 12 цифр)', event)">ИНН</button>
+            <button class="tab" onclick="setType('passport', 'Введите серию и номер паспорта', event)">Паспорт</button>
+            <button class="tab" onclick="setType('snils', 'Введите СНИЛС (11 цифр)', event)">СНИЛС</button>
         </div>
 
-        <!-- Поле ввода -->
         <div class="search-wrapper">
             <input type="text" id="search-input" class="search-input" placeholder="Введите номер телефона">
             <button class="submit-btn" id="submit-btn" onclick="submitSearch()">
@@ -365,7 +353,6 @@
         </div>
 
         <div class="bottom-info">
-            <span>Лимит: 10 из 10 запросов</span>
             <div>
                 <a href="#">Правила использования</a> • 
                 <a href="https://t.me/ListopadovSearchBot" class="telegram-link">✈️ Telegram-бот</a>
@@ -373,14 +360,12 @@
         </div>
     </div>
 
-    <!-- Индикатор загрузки -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
         <span>Инициализация сканера...</span>
-        <span style="font-size: 12px; color: #666;" id="loader-status">Соединение с сервером</span>
+        <span style="font-size: 12px; color: #9ca3af;" id="loader-status">Соединение с сервером</span>
     </div>
 
-    <!-- Блок результатов -->
     <div class="results-container" id="results-container">
         <div class="result-header">
             <span id="res-query">Запрос: ...</span>
@@ -390,9 +375,10 @@
     </div>
 
     <script>
-        // ⚠️ ВАЖНО: ТУТ ССЫЛКА НА ТВОЙ RENDER
-        // Если Render засыпает, первый запрос может занять до 50 секунд.
         const API_URL = "https://listopadov-search-1.onrender.com/api/search";
+
+        // ID твоего бота для проверки лимитов (опционально)
+        const BOT_URL = "https://t.me/ListopadovSearchBot";
 
         let currentType = 'phone';
         const inputEl = document.getElementById('search-input');
@@ -403,6 +389,13 @@
         const resultContent = document.getElementById('result-content');
         const resQuery = document.getElementById('res-query');
         const resTime = document.getElementById('res-time');
+
+        // Проверяем лимит локально (3 запроса)
+        let localLimit = localStorage.getItem('oasis_limit');
+        if (localLimit === null) {
+            localLimit = 3;
+            localStorage.setItem('oasis_limit', 3);
+        }
 
         function setType(type, placeholder, event) {
             currentType = type;
@@ -415,30 +408,27 @@
             const query = inputEl.value.trim();
             if (!query) return;
 
-            // Сброс предыдущих результатов
+            // Проверка лимита перед отправкой
+            if (parseInt(localLimit) <= 0) {
+                alert("У вас закончились бесплатные запросы. Перейдите в Telegram-бот, чтобы купить еще.");
+                window.location.href = BOT_URL;
+                return;
+            }
+
             resultsContainer.style.display = 'none';
             loaderEl.style.display = 'flex';
             btnEl.disabled = true;
             
-            // Эмуляция статусов загрузки
-            let statuses = [
-                "Соединение с сервером...", 
-                "Поиск в базе Mobius...", 
-                "Поиск в базе LEGO...", 
-                "Поиск в базе DevHydra...",
-                "Анализ утечек...",
-                "Формирование отчета..."
-            ];
+            let statuses = ["Соединение с сервером...", "Поиск в базе Mobius...", "Анализ утечек...", "Формирование отчета..."];
             let statusIndex = 0;
             const statusInterval = setInterval(() => {
                 loaderStatus.innerText = statuses[statusIndex % statuses.length];
                 statusIndex++;
-            }, 3000);
+            }, 2000);
 
             const startTime = Date.now();
 
             try {
-                // Отправка запроса на Render
                 const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}`);
                 const data = await response.json();
 
@@ -451,30 +441,31 @@
                     return;
                 }
 
-                // Форматируем ответ бота (превращаем теги в красивый HTML)
+                // Списание 1 запроса
+                localLimit = parseInt(localLimit) - 1;
+                localStorage.setItem('oasis_limit', localLimit);
+
                 let formattedHtml = data.result
                     .replace(/<b>(.*?)<\/b>/g, '<span class="tg-bold">$1</span>')
                     .replace(/<code>(.*?)<\/code>/g, '<span class="tg-code">$1</span>')
                     .replace(/<blockquote>(.*?)<\/blockquote>/gs, '<div class="tg-blockquote">$1</div>')
                     .replace(/\n/g, '<br>');
 
-                // Вывод данных
                 resultContent.innerHTML = formattedHtml;
                 resQuery.innerText = `Запрос: ${data.query}`;
-                resTime.innerText = `Успешно за ${((Date.now() - startTime) / 1000).toFixed(1)} сек.`;
+                resTime.innerText = `Успешно за ${((Date.now() - startTime) / 1000).toFixed(1)} сек. | Осталось: ${localLimit}`;
                 
                 resultsContainer.style.display = 'block';
                 resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (error) {
                 clearInterval(statusInterval);
-                alert("Ошибка: Сервер не отвечает. Возможно, он перезагружается (Render Free Tier). Попробуйте еще раз через 10 секунд.");
+                alert("Ошибка: Сервер не отвечает. Возможно, он перезагружается (Render Free Tier). Подождите 10 секунд и попробуйте снова.");
             } finally {
                 loaderEl.style.display = 'none';
                 btnEl.disabled = false;
             }
         }
 
-        // Поиск по Enter
         inputEl.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') submitSearch();
         });
