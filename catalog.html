@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -35,18 +34,42 @@
             background: #111;
             z-index: 10;
         }
-        .header h1 { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header h1 { font-size: 18px; font-weight: 600; }
         .back-btn {
             background: transparent; border: 1px solid var(--border); color: var(--text);
             padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px;
-            transition: 0.2s;
         }
-        .back-btn:hover { background: #222; }
+
+        /* Экран загрузки */
+        #loading {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--accent);
+            font-size: 14px;
+            z-index: 100;
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid #333;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         #network-container {
             flex: 1;
             width: 100%;
-            background-image: radial-gradient(circle at center, #111 0%, #0a0a0a 100%);
+            background: #0a0a0a;
             position: relative;
         }
 
@@ -65,7 +88,7 @@
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 20;
-            max-height: 50vh;
+            max-height: 60vh;
             overflow-y: auto;
         }
         .modal-header {
@@ -96,6 +119,11 @@
         <a href="index.html" class="back-btn">← На главную</a>
     </div>
 
+    <div id="loading">
+        <div class="spinner"></div>
+        Инициализация нейросети графа...
+    </div>
+
     <div id="network-container"></div>
 
     <div class="modal" id="info-modal">
@@ -107,59 +135,115 @@
     </div>
 
     <script>
-        var nodes = new vis.DataSet([
-            { id: 1, label: 'OSINT Catalog', shape: 'dot', size: 25, color: { background: '#3b82f6', border: '#1d4ed8' }, font: { color: '#fff', size: 16 } },
-            
-            { id: 2, label: 'Люди и контакты', shape: 'box', color: '#222', font: { color: '#fff' } },
-            { id: 21, label: 'Телефоны', shape: 'dot', size: 12, color: '#444' },
-            { id: 22, label: 'Соцсети', shape: 'dot', size: 12, color: '#444' },
-            
-            { id: 3, label: 'Ресурсы и базы', shape: 'box', color: '#222', font: { color: '#fff' } },
-            { id: 31, label: 'Утечки', shape: 'dot', size: 12, color: '#444' },
-            { id: 32, label: 'Госреестры', shape: 'dot', size: 12, color: '#444' },
-            
-            { id: 4, label: 'Telegram Боты', shape: 'box', color: '#222', font: { color: '#fff' } },
-            { id: 41, label: 'Sherlock Bot', shape: 'dot', size: 12, color: '#444' },
-            { id: 42, label: 'LeakOSINT', shape: 'dot', size: 12, color: '#444' },
-            { id: 43, label: 'Vektor', shape: 'dot', size: 12, color: '#444' }
-        ]);
-
-        var edges = new vis.DataSet([
-            { from: 1, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 },
-            { from: 2, to: 21 }, { from: 2, to: 22 },
-            { from: 3, to: 31 }, { from: 3, to: 32 },
-            { from: 4, to: 41 }, { from: 4, to: 42 }, { from: 4, to: 43 }
-        ]);
-
-        var container = document.getElementById('network-container');
-        var data = { nodes: nodes, edges: edges };
-        
-        var options = {
-            nodes: { borderWidth: 1, font: { size: 14, face: 'Inter' }, shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 10 } },
-            edges: { width: 1, color: { color: '#333', highlight: '#3b82f6' }, smooth: { type: 'continuous' } },
-            physics: { enabled: true, barnesHut: { gravitationalConstant: -3000, centralGravity: 0.3, springLength: 150 }, stabilization: { iterations: 150 } },
-            interaction: { hover: true, tooltipDelay: 200 }
-        };
-
-        var network = new vis.Network(container, data, options);
-
-        network.on("click", function (params) {
-            if (params.nodes.length > 0) {
-                var nodeId = params.nodes[0];
-                var nodeName = nodes.get(nodeId).label;
-                showModal(nodeName, nodeId);
-            } else {
-                closeModal();
+        // Ждем полной загрузки страницы и библиотеки
+        window.addEventListener('load', function() {
+            if (typeof vis === 'undefined') {
+                document.getElementById('loading').innerHTML = '❌ Ошибка: Блокировщик рекламы или слабый интернет не дают загрузить граф. Отключите AdBlock.';
+                return;
             }
+
+            // Скрываем загрузку
+            document.getElementById('loading').style.display = 'none';
+
+            var nodes = new vis.DataSet([
+                // Центр
+                { id: 1, label: 'OASIS', shape: 'dot', size: 30, color: { background: '#3b82f6', border: '#1d4ed8' }, font: { color: '#fff', size: 18, bold: true } },
+                
+                // Ветка 1: Люди
+                { id: 2, label: 'Люди и ФИО', shape: 'box', color: '#222', font: { color: '#fff' } },
+                { id: 21, label: 'GetContact', shape: 'dot', size: 12, color: '#444' },
+                { id: 22, label: 'Sherlock', shape: 'dot', size: 12, color: '#444' },
+                { id: 23, label: 'Maigret', shape: 'dot', size: 12, color: '#444' },
+                
+                // Ветка 2: Соцсети
+                { id: 3, label: 'Соцсети', shape: 'box', color: '#222', font: { color: '#fff' } },
+                { id: 31, label: 'VK Search', shape: 'dot', size: 12, color: '#444' },
+                { id: 32, label: 'Telegram OSINT', shape: 'dot', size: 12, color: '#444' },
+                { id: 33, label: 'Instagram Parser', shape: 'dot', size: 12, color: '#444' },
+                
+                // Ветка 3: Утечки
+                { id: 4, label: 'Базы данных', shape: 'box', color: '#222', font: { color: '#fff' } },
+                { id: 41, label: 'HIBP', shape: 'dot', size: 12, color: '#444' },
+                { id: 42, label: 'DeHashed', shape: 'dot', size: 12, color: '#444' },
+                { id: 43, label: 'LeakCheck', shape: 'dot', size: 12, color: '#444' },
+                
+                // Ветка 4: Боты Telegram
+                { id: 5, label: 'Telegram Боты', shape: 'box', color: '#222', font: { color: '#fff' } },
+                { id: 51, label: 'Oasis Search Bot', shape: 'dot', size: 14, color: { background: '#3b82f6' } },
+                { id: 52, label: 'LeakOSINT Bot', shape: 'dot', size: 12, color: '#444' },
+                { id: 53, label: 'Vektor Bot', shape: 'dot', size: 12, color: '#444' },
+                { id: 54, label: 'FunStat Bot', shape: 'dot', size: 12, color: '#444' },
+                { id: 55, label: 'Sherlock Bot', shape: 'dot', size: 12, color: '#444' },
+                
+                // Ветка 5: Инструменты
+                { id: 6, label: 'Инструменты', shape: 'box', color: '#222', font: { color: '#fff' } },
+                { id: 61, label: 'Shodan', shape: 'dot', size: 12, color: '#444' },
+                { id: 62, label: 'Maltego', shape: 'dot', size: 12, color: '#444' },
+                { id: 63, label: 'Google Dorks', shape: 'dot', size: 12, color: '#444' }
+            ]);
+
+            var edges = new vis.DataSet([
+                { from: 1, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 }, { from: 1, to: 5 }, { from: 1, to: 6 },
+                { from: 2, to: 21 }, { from: 2, to: 22 }, { from: 2, to: 23 },
+                { from: 3, to: 31 }, { from: 3, to: 32 }, { from: 3, to: 33 },
+                { from: 4, to: 41 }, { from: 4, to: 42 }, { from: 4, to: 43 },
+                { from: 5, to: 51 }, { from: 5, to: 52 }, { from: 5, to: 53 }, { from: 5, to: 54 }, { from: 5, to: 55 },
+                { from: 6, to: 61 }, { from: 6, to: 62 }, { from: 6, to: 63 }
+            ]);
+
+            var container = document.getElementById('network-container');
+            var data = { nodes: nodes, edges: edges };
+            
+            var options = {
+                nodes: { borderWidth: 1, font: { size: 12, face: 'Inter' }, shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 10 } },
+                edges: { width: 1, color: { color: '#333', highlight: '#3b82f6' }, smooth: { type: 'continuous' } },
+                physics: { enabled: true, barnesHut: { gravitationalConstant: -4000, centralGravity: 0.3, springLength: 150 }, stabilization: { iterations: 200 } },
+                interaction: { hover: true, tooltipDelay: 200 }
+            };
+
+            var network = new vis.Network(container, data, options);
+
+            network.on("click", function (params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    showModal(nodes.get(nodeId).label, nodeId);
+                } else {
+                    closeModal();
+                }
+            });
         });
 
+        // Огромный список инструментов для каждого узла
         const toolsData = {
-            21: [{name: "GetContact", url: "#"}, {name: "Oasis Search Bot", url: "https://t.me/ListopadovSearchBot"}],
-            22: [{name: "VK Search", url: "#"}, {name: "Sherlock", url: "#"}],
-            31: [{name: "LeakOSINT Bot", url: "#"}, {name: "HIBP", url: "https://haveibeenpwned.com"}],
-            41: [{name: "Sherlock Bot", url: "#"}],
-            42: [{name: "LeakOSINT", url: "#"}],
-            43: [{name: "Vektor Bot", url: "#"}]
+            // Люди
+            21: [{name: "GetContact (определение имени)", url: "https://getcontact.com"}, {name: "Truecaller", url: "https://www.truecaller.com"}],
+            22: [{name: "Sherlock (поиск по нику)", url: "https://github.com/sherlock-project/sherlock"}, {name: "Maigret", url: "https://github.com/soxoj/maigret"}],
+            23: [{name: "Oasis Search Bot", url: "https://t.me/ListopadovSearchBot"}],
+            
+            // Соцсети
+            31: [{name: "VK API / Поиск людей", url: "https://vk.com"}, {name: "220VK", url: "https://220vk.com"}],
+            32: [{name: "Telegram OSINT Bot", url: "https://t.me/ListopadovSearchBot"}, {name: "Telemetr (анализ каналов)", url: "https://telemetr.io"}],
+            33: [{name: "Instaloader", url: "https://github.com/instaloader/instaloader"}, {name: "Picuki", url: "https://www.picuki.com"}],
+            
+            // Утечки
+            41: [{name: "Have I Been Pwned", url: "https://haveibeenpwned.com"}, {name: "HIBP API", url: "https://haveibeenpwned.com/API/v3"}],
+            42: [{name: "DeHashed", url: "https://www.dehashed.com"}, {name: "Snusbase", url: "https://snusbase.com"}],
+            43: [{name: "LeakCheck", url: "https://leakcheck.io"}, {name: "Intelligence X", url: "https://intelx.io"}],
+            
+            // Боты
+            51: [
+                {name: "🚀 Oasis Search (наш бот)", url: "https://t.me/ListopadovSearchBot"},
+                {name: "panarchist", url: "https://t.me/panarchist"}
+            ],
+            52: [{name: "LeakOSINT Bot (утечки)", url: "https://t.me/LeakOSINT0Bot"}],
+            53: [{name: "Vektor Bot (поиск)", url: "https://t.me/VektorSearchBot"}],
+            54: [{name: "FunStat Bot (статистика)", url: "https://t.me/FunStatBot"}],
+            55: [{name: "Sherlock Bot (поиск по нику)", url: "https://t.me/SherlockSearchBot"}],
+            
+            // Инструменты
+            61: [{name: "Shodan (поиск серверов)", url: "https://shodan.io"}, {name: "Censys", url: "https://censys.io"}],
+            62: [{name: "Maltego (графы связей)", url: "https://www.maltego.com"}, {name: "SpiderFoot", url: "https://github.com/smicallef/spiderfoot"}],
+            63: [{name: "Google Dorks (шпаргалка)", url: "https://www.exploit-db.com/google-hacking-database"}, {name: "DorkSearch", url: "https://dorksearch.com"}]
         };
 
         function showModal(title, id) {
@@ -167,6 +251,7 @@
             var body = document.getElementById('modal-body');
             body.innerHTML = '';
             var items = toolsData[id] || [];
+            
             if (items.length === 0) {
                 body.innerHTML = '<div style="color: #888; font-size: 13px;">Инструменты пока не добавлены.</div>';
             } else {
