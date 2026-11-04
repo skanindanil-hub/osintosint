@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oasis Search | Catalog</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #ffffff;
+            --text-muted: #8a8a8a;
+            --border: #222;
+            --accent: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+            z-index: 10;
+        }
+        .header h1 { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .back-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px;
+            transition: 0.2s;
+        }
+        .back-btn:hover { background: #222; }
+
+        #network-container {
+            flex: 1;
+            width: 100%;
+            background-image: radial-gradient(circle at center, #111 0%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: #161616;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 20;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-title { font-size: 16px; font-weight: 600; color: var(--accent); }
+        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        
+        .tool-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #222; font-size: 14px;
+        }
+        .tool-item:last-child { border-bottom: none; }
+        .tool-item a { color: var(--text); text-decoration: none; }
+        .tool-item a:hover { color: var(--accent); }
+        .tool-link { font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🕸 OSINT Catalog</h1>
+        <a href="index.html" class="back-btn">← На главную</a>
+    </div>
+
+    <div id="network-container"></div>
+
+    <div class="modal" id="info-modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Категория</div>
+            <button class="close-modal" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-body"></div>
+    </div>
+
+    <script>
+        var nodes = new vis.DataSet([
+            { id: 1, label: 'OSINT Catalog', shape: 'dot', size: 25, color: { background: '#3b82f6', border: '#1d4ed8' }, font: { color: '#fff', size: 16 } },
+            
+            { id: 2, label: 'Люди и контакты', shape: 'box', color: '#222', font: { color: '#fff' } },
+            { id: 21, label: 'Телефоны', shape: 'dot', size: 12, color: '#444' },
+            { id: 22, label: 'Соцсети', shape: 'dot', size: 12, color: '#444' },
+            
+            { id: 3, label: 'Ресурсы и базы', shape: 'box', color: '#222', font: { color: '#fff' } },
+            { id: 31, label: 'Утечки', shape: 'dot', size: 12, color: '#444' },
+            { id: 32, label: 'Госреестры', shape: 'dot', size: 12, color: '#444' },
+            
+            { id: 4, label: 'Telegram Боты', shape: 'box', color: '#222', font: { color: '#fff' } },
+            { id: 41, label: 'Sherlock Bot', shape: 'dot', size: 12, color: '#444' },
+            { id: 42, label: 'LeakOSINT', shape: 'dot', size: 12, color: '#444' },
+            { id: 43, label: 'Vektor', shape: 'dot', size: 12, color: '#444' }
+        ]);
+
+        var edges = new vis.DataSet([
+            { from: 1, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 },
+            { from: 2, to: 21 }, { from: 2, to: 22 },
+            { from: 3, to: 31 }, { from: 3, to: 32 },
+            { from: 4, to: 41 }, { from: 4, to: 42 }, { from: 4, to: 43 }
+        ]);
+
+        var container = document.getElementById('network-container');
+        var data = { nodes: nodes, edges: edges };
+        
+        var options = {
+            nodes: { borderWidth: 1, font: { size: 14, face: 'Inter' }, shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 10 } },
+            edges: { width: 1, color: { color: '#333', highlight: '#3b82f6' }, smooth: { type: 'continuous' } },
+            physics: { enabled: true, barnesHut: { gravitationalConstant: -3000, centralGravity: 0.3, springLength: 150 }, stabilization: { iterations: 150 } },
+            interaction: { hover: true, tooltipDelay: 200 }
+        };
+
+        var network = new vis.Network(container, data, options);
+
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                var nodeName = nodes.get(nodeId).label;
+                showModal(nodeName, nodeId);
+            } else {
+                closeModal();
+            }
+        });
+
+        const toolsData = {
+            21: [{name: "GetContact", url: "#"}, {name: "Oasis Search Bot", url: "https://t.me/ListopadovSearchBot"}],
+            22: [{name: "VK Search", url: "#"}, {name: "Sherlock", url: "#"}],
+            31: [{name: "LeakOSINT Bot", url: "#"}, {name: "HIBP", url: "https://haveibeenpwned.com"}],
+            41: [{name: "Sherlock Bot", url: "#"}],
+            42: [{name: "LeakOSINT", url: "#"}],
+            43: [{name: "Vektor Bot", url: "#"}]
+        };
+
+        function showModal(title, id) {
+            document.getElementById('modal-title').innerText = title;
+            var body = document.getElementById('modal-body');
+            body.innerHTML = '';
+            var items = toolsData[id] || [];
+            if (items.length === 0) {
+                body.innerHTML = '<div style="color: #888; font-size: 13px;">Инструменты пока не добавлены.</div>';
+            } else {
+                items.forEach(item => {
+                    body.innerHTML += `<div class="tool-item"><a href="${item.url}" target="_blank">${item.name}</a><span class="tool-link">перейти ↗</span></div>`;
+                });
+            }
+            document.getElementById('info-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
