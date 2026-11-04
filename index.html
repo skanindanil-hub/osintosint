@@ -36,6 +36,7 @@
             background-repeat: no-repeat;
         }
 
+        /* --- ВЕРХНЯЯ ПАНЕЛЬ --- */
         .top-bar {
             width: 100%;
             max-width: 850px;
@@ -82,6 +83,7 @@
             color: var(--accent-hover);
         }
 
+        /* --- ОСНОВНОЙ КОНТЕНТ --- */
         .main-container {
             width: 100%;
             max-width: 650px;
@@ -127,6 +129,7 @@
             margin-bottom: 10px;
         }
 
+        /* --- ТАБЫ --- */
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -159,6 +162,7 @@
             border-color: #bfdbfe;
         }
 
+        /* --- СТРОКА ПОИСКА --- */
         .search-wrapper {
             position: relative;
             width: 100%;
@@ -251,6 +255,7 @@
             font-weight: 500;
         }
 
+        /* --- ЛОАДЕР --- */
         .loader {
             display: none;
             flex-direction: column;
@@ -271,6 +276,7 @@
             animation: spin 1s linear infinite;
         }
 
+        /* --- РЕЗУЛЬТАТЫ --- */
         .results-container {
             display: none;
             width: 100%;
@@ -323,7 +329,7 @@
             border-radius: 0 8px 8px 0;
         }
 
-        /* --- Модальное окно покупки --- */
+        /* --- МОДАЛЬНОЕ ОКНО --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -455,7 +461,7 @@
             background: var(--accent-hover);
         }
 
-        /* Анимации */
+        /* --- АНИМАЦИИ --- */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -465,14 +471,15 @@
     </style>
 </head>
 <body>
-    <!-- Верхняя панель -->
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ (ТУТ КНОПКИ) -->
     <div class="top-bar">
+        <a href="catalog.html" class="btn-top">🕸 Catalog</a> <!-- КНОПКА КАТАЛОГА -->
         <button class="btn-top btn-accent" onclick="openBuyModal()">💎 Купить запросы</button>
         <a href="https://t.me/anodoxx" class="btn-top" target="_blank">✈️ listopadov</a>
         <a href="https://t.me/panarchist" class="btn-top" target="_blank">✈️ panarchist</a>
     </div>
 
-    <!-- Основной контент -->
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div class="main-container">
         <div class="logo-icon">🕷️</div>
         
@@ -493,6 +500,7 @@
             <button class="tab" onclick="setType('snils', 'Введите СНИЛС (11 цифр)', event)">СНИЛС</button>
         </div>
 
+        <!-- Поиск -->
         <div class="search-wrapper">
             <input type="text" id="search-input" class="search-input" placeholder="Введите номер телефона">
             <button class="submit-btn" id="submit-btn" onclick="submitSearch()">
@@ -563,6 +571,7 @@
         </div>
     </div>
 
+    <!-- СКРИПТЫ -->
     <script>
         const API_URL = "https://listopadov-search-1.onrender.com/api/search";
         const BOT_URL = "https://t.me/ListopadovSearchBot";
@@ -596,7 +605,6 @@
             const query = inputEl.value.trim();
             if (!query) return;
 
-            // Проверка лимита
             if (parseInt(localLimit) <= 0) {
                 alert("У вас закончились запросы. Купите их или перейдите в Telegram-бот.");
                 openBuyModal();
@@ -658,7 +666,7 @@
             if (e.key === 'Enter') submitSearch();
         });
 
-        // --- Логика модального окна покупки ---
+        // Модальное окно покупки
         function openBuyModal() {
             document.getElementById('buy-modal').style.display = 'flex';
             document.getElementById('payment-info').style.display = 'none';
@@ -673,11 +681,9 @@
             const nanoAmount = price * 1000000000;
             document.getElementById('tonkeeper-link').href = `ton://transfer/${WALLET}?amount=${nanoAmount}`;
             
-            // Обновляем текст в зависимости от выбора
             document.querySelector('#payment-info p').innerHTML = `Переведите <b>${price} TON</b> за ${amount} запросов на кошелек:`;
         }
 
-        // Закрытие по клику вне окна
         document.getElementById('buy-modal').addEventListener('click', function(e) {
             if (e.target === this) closeBuyModal();
         });
