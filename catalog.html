@@ -4,24 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oasis Search | Catalog</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0a;
-            --text: #ffffff;
-            --text-muted: #8a8a8a;
-            --border: #222;
-            --accent: #3b82f6;
+            --bg: #ffffff;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --accent: #2563eb;
+            --hover-bg: #f3f4f6;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Inter', sans-serif;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .header {
@@ -30,83 +32,89 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #111;
+            background: #fff;
+            position: sticky;
+            top: 0;
             z-index: 10;
         }
-        .header h1 { font-size: 18px; font-weight: 600; }
+        .header h1 { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .back-btn {
             background: transparent; border: 1px solid var(--border); color: var(--text);
             padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px;
+            transition: 0.2s;
+        }
+        .back-btn:hover { background: var(--hover-bg); }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            width: 100%;
         }
 
-        #loading {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: var(--accent);
-            font-size: 14px;
-            z-index: 100;
-            background: var(--bg);
-            padding: 20px;
-            border-radius: 12px;
+        .category {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .tool-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        .spinner {
-            width: 30px; height: 30px;
-            border: 3px solid #333;
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        #network-container {
-            flex: 1;
-            width: 100%;
-            background: #0a0a0a;
-            position: relative;
+            gap: 5px;
         }
 
-        .modal {
-            display: none;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            background: #161616;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 20;
-            max-height: 60vh;
-            overflow-y: auto;
+        .tool-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
         }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--accent);
         }
-        .modal-title { font-size: 16px; font-weight: 600; color: var(--accent); }
-        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-        
-        .tool-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid #222; font-size: 14px;
+
+        .tool-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
-        .tool-item:last-child { border-bottom: none; }
-        .tool-item a { color: var(--text); text-decoration: none; }
-        .tool-item a:hover { color: var(--accent); }
-        .tool-link { font-size: 12px; color: var(--text-muted); }
+
+        .tool-link-icon {
+            margin-top: auto;
+            font-size: 12px;
+            color: #9ca3af;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: right;
+            padding-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .tools-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -116,135 +124,174 @@
         <a href="index.html" class="back-btn">← На главную</a>
     </div>
 
-    <div id="loading">
-        <div class="spinner"></div>
-        Загрузка графа...
-    </div>
-
-    <div id="network-container"></div>
-
-    <div class="modal" id="info-modal">
-        <div class="modal-header">
-            <div class="modal-title" id="modal-title">Категория</div>
-            <button class="close-modal" onclick="closeModal()">✕</button>
+    <div class="container">
+        
+        <!-- Люди и ФИО -->
+        <div class="category">
+            <div class="category-title">👤 Люди и ФИО</div>
+            <div class="tools-grid">
+                <a href="https://getcontact.com" target="_blank" class="tool-card">
+                    <div class="tool-name">GetContact</div>
+                    <div class="tool-desc">Определение имени по номеру телефона</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://www.truecaller.com" target="_blank" class="tool-card">
+                    <div class="tool-name">Truecaller</div>
+                    <div class="tool-desc">Поиск людей и определение спама</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://github.com/sherlock-project/sherlock" target="_blank" class="tool-card">
+                    <div class="tool-name">Sherlock</div>
+                    <div class="tool-desc">Поиск профилей по никнейму</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://github.com/soxoj/maigret" target="_blank" class="tool-card">
+                    <div class="tool-name">Maigret</div>
+                    <div class="tool-desc">Поиск аккаунтов по никнейму (3000+ сайтов)</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+            </div>
         </div>
-        <div id="modal-body"></div>
+
+        <!-- Соцсети -->
+        <div class="category">
+            <div class="category-title">📱 Соцсети</div>
+            <div class="tools-grid">
+                <a href="https://vk.com" target="_blank" class="tool-card">
+                    <div class="tool-name">VK API / Поиск</div>
+                    <div class="tool-desc">Поиск людей ВКонтакте</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://220vk.com" target="_blank" class="tool-card">
+                    <div class="tool-name">220VK</div>
+                    <div class="tool-desc">Анализ активности ВКонтакте</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://telemetr.io" target="_blank" class="tool-card">
+                    <div class="tool-name">Telemetr</div>
+                    <div class="tool-desc">Анализ Telegram-каналов и чатов</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://www.picuki.com" target="_blank" class="tool-card">
+                    <div class="tool-name">Picuki</div>
+                    <div class="tool-desc">Просмотр Instagram-профилей без входа</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://github.com/instaloader/instaloader" target="_blank" class="tool-card">
+                    <div class="tool-name">Instaloader</div>
+                    <div class="tool-desc">Скачивание данных Instagram</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Утечки -->
+        <div class="category">
+            <div class="category-title">🗄 Базы данных и утечки</div>
+            <div class="tools-grid">
+                <a href="https://haveibeenpwned.com" target="_blank" class="tool-card">
+                    <div class="tool-name">Have I Been Pwned</div>
+                    <div class="tool-desc">Проверка Email на утечки</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://www.dehashed.com" target="_blank" class="tool-card">
+                    <div class="tool-name">DeHashed</div>
+                    <div class="tool-desc">Поиск по базам утечек (Email, пароли)</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://snusbase.com" target="_blank" class="tool-card">
+                    <div class="tool-name">Snusbase</div>
+                    <div class="tool-desc">Поиск данных в утечках</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://leakcheck.io" target="_blank" class="tool-card">
+                    <div class="tool-name">LeakCheck</div>
+                    <div class="tool-desc">Проверка утечек по Email/логину</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://intelx.io" target="_blank" class="tool-card">
+                    <div class="tool-name">Intelligence X</div>
+                    <div class="tool-desc">Поиск в архивах и утечках</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Telegram Боты -->
+        <div class="category">
+            <div class="category-title">📟 Telegram Боты</div>
+            <div class="tools-grid">
+                <a href="https://t.me/ListopadovSearchBot" target="_blank" class="tool-card" style="border-color: var(--accent); background: #eff6ff;">
+                    <div class="tool-name">🚀 Oasis Search (наш)</div>
+                    <div class="tool-desc">Основной бот для поиска информации</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://t.me/panarchist" target="_blank" class="tool-card" style="border-color: var(--accent); background: #eff6ff;">
+                    <div class="tool-name">✈️ panarchist</div>
+                    <div class="tool-desc">Связь с администратором</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://t.me/LeakOSINT0Bot" target="_blank" class="tool-card">
+                    <div class="tool-name">LeakOSINT Bot</div>
+                    <div class="tool-desc">Поиск по утечкам данных</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://t.me/VektorSearchBot" target="_blank" class="tool-card">
+                    <div class="tool-name">Vektor Bot</div>
+                    <div class="tool-desc">Поиск по открытым источникам</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://t.me/FunStatBot" target="_blank" class="tool-card">
+                    <div class="tool-name">FunStat Bot</div>
+                    <div class="tool-desc">Статистика Telegram-аккаунтов</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://t.me/SherlockSearchBot" target="_blank" class="tool-card">
+                    <div class="tool-name">Sherlock Bot</div>
+                    <div class="tool-desc">Поиск аккаунтов по никнейму</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Инструменты -->
+        <div class="category">
+            <div class="category-title">🛠 Инструменты OSINT</div>
+            <div class="tools-grid">
+                <a href="https://shodan.io" target="_blank" class="tool-card">
+                    <div class="tool-name">Shodan</div>
+                    <div class="tool-desc">Поиск подключенных устройств и серверов</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://censys.io" target="_blank" class="tool-card">
+                    <div class="tool-name">Censys</div>
+                    <div class="tool-desc">Поиск хостов и сертификатов</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://www.maltego.com" target="_blank" class="tool-card">
+                    <div class="tool-name">Maltego</div>
+                    <div class="tool-desc">Построение графов связей</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://github.com/smicallef/spiderfoot" target="_blank" class="tool-card">
+                    <div class="tool-name">SpiderFoot</div>
+                    <div class="tool-desc">Автоматизированный сбор информации</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://dorksearch.com" target="_blank" class="tool-card">
+                    <div class="tool-name">DorkSearch</div>
+                    <div class="tool-desc">Быстрый поиск Google Dorks</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+                <a href="https://www.exploit-db.com/google-hacking-database" target="_blank" class="tool-card">
+                    <div class="tool-name">Google Hacking DB</div>
+                    <div class="tool-desc">База готовых Google Dorks</div>
+                    <div class="tool-link-icon">↗</div>
+                </a>
+            </div>
+        </div>
+
     </div>
 
-    <!-- ВСТРОЕННАЯ БИБЛИОТЕКА VIS-NETWORK (без внешних CDN) -->
-    <script>
-        /*! vis-network - v9.1.6 - Standalone UMD Build - Inlined for offline use */
-        !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).vis={})}(this,(function(t){"use strict";
-        // ... (здесь я сократил для примера, но на деле тебе нужно вставить полный код библиотеки) ...
-        }));
-    </script>
-
-    <script>
-        // Ждем загрузки страницы
-        window.addEventListener('load', function() {
-            // Проверка, загрузилась ли библиотека
-            if (typeof vis === 'undefined') {
-                document.getElementById('loading').innerHTML = '❌ Ошибка: Библиотека не загрузилась. Попробуйте обновить страницу.';
-                return;
-            }
-
-            document.getElementById('loading').style.display = 'none';
-
-            var nodes = new vis.DataSet([
-                { id: 1, label: 'OASIS', shape: 'dot', size: 30, color: { background: '#3b82f6', border: '#1d4ed8' }, font: { color: '#fff', size: 18, bold: true } },
-                { id: 2, label: 'Люди и ФИО', shape: 'box', color: '#222', font: { color: '#fff' } },
-                { id: 21, label: 'GetContact', shape: 'dot', size: 12, color: '#444' },
-                { id: 22, label: 'Sherlock', shape: 'dot', size: 12, color: '#444' },
-                { id: 23, label: 'Maigret', shape: 'dot', size: 12, color: '#444' },
-                { id: 3, label: 'Соцсети', shape: 'box', color: '#222', font: { color: '#fff' } },
-                { id: 31, label: 'VK Search', shape: 'dot', size: 12, color: '#444' },
-                { id: 32, label: 'Telegram OSINT', shape: 'dot', size: 12, color: '#444' },
-                { id: 33, label: 'Instagram Parser', shape: 'dot', size: 12, color: '#444' },
-                { id: 4, label: 'Базы данных', shape: 'box', color: '#222', font: { color: '#fff' } },
-                { id: 41, label: 'HIBP', shape: 'dot', size: 12, color: '#444' },
-                { id: 42, label: 'DeHashed', shape: 'dot', size: 12, color: '#444' },
-                { id: 43, label: 'LeakCheck', shape: 'dot', size: 12, color: '#444' },
-                { id: 5, label: 'Telegram Боты', shape: 'box', color: '#222', font: { color: '#fff' } },
-                { id: 51, label: 'Oasis Search Bot', shape: 'dot', size: 14, color: { background: '#3b82f6' } },
-                { id: 52, label: 'LeakOSINT Bot', shape: 'dot', size: 12, color: '#444' },
-                { id: 53, label: 'Vektor Bot', shape: 'dot', size: 12, color: '#444' },
-                { id: 54, label: 'FunStat Bot', shape: 'dot', size: 12, color: '#444' },
-                { id: 55, label: 'Sherlock Bot', shape: 'dot', size: 12, color: '#444' },
-                { id: 6, label: 'Инструменты', shape: 'box', color: '#222', font: { color: '#fff' } },
-                { id: 61, label: 'Shodan', shape: 'dot', size: 12, color: '#444' },
-                { id: 62, label: 'Maltego', shape: 'dot', size: 12, color: '#444' },
-                { id: 63, label: 'Google Dorks', shape: 'dot', size: 12, color: '#444' }
-            ]);
-
-            var edges = new vis.DataSet([
-                { from: 1, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 }, { from: 1, to: 5 }, { from: 1, to: 6 },
-                { from: 2, to: 21 }, { from: 2, to: 22 }, { from: 2, to: 23 },
-                { from: 3, to: 31 }, { from: 3, to: 32 }, { from: 3, to: 33 },
-                { from: 4, to: 41 }, { from: 4, to: 42 }, { from: 4, to: 43 },
-                { from: 5, to: 51 }, { from: 5, to: 52 }, { from: 5, to: 53 }, { from: 5, to: 54 }, { from: 5, to: 55 },
-                { from: 6, to: 61 }, { from: 6, to: 62 }, { from: 6, to: 63 }
-            ]);
-
-            var container = document.getElementById('network-container');
-            var data = { nodes: nodes, edges: edges };
-            
-            var options = {
-                nodes: { borderWidth: 1, font: { size: 12, face: 'Inter' }, shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 10 } },
-                edges: { width: 1, color: { color: '#333', highlight: '#3b82f6' }, smooth: { type: 'continuous' } },
-                physics: { enabled: true, barnesHut: { gravitationalConstant: -4000, centralGravity: 0.3, springLength: 150 }, stabilization: { iterations: 200 } },
-                interaction: { hover: true, tooltipDelay: 200 }
-            };
-
-            var network = new vis.Network(container, data, options);
-
-            network.on("click", function (params) {
-                if (params.nodes.length > 0) {
-                    var nodeId = params.nodes[0];
-                    showModal(nodes.get(nodeId).label, nodeId);
-                } else {
-                    closeModal();
-                }
-            });
-        });
-
-        const toolsData = {
-            21: [{name: "GetContact (определение имени)", url: "https://getcontact.com"}, {name: "Truecaller", url: "https://www.truecaller.com"}],
-            22: [{name: "Sherlock (поиск по нику)", url: "https://github.com/sherlock-project/sherlock"}, {name: "Maigret", url: "https://github.com/soxoj/maigret"}],
-            23: [{name: "Oasis Search Bot", url: "https://t.me/ListopadovSearchBot"}],
-            31: [{name: "VK API / Поиск людей", url: "https://vk.com"}, {name: "220VK", url: "https://220vk.com"}],
-            32: [{name: "Telegram OSINT Bot", url: "https://t.me/ListopadovSearchBot"}, {name: "Telemetr (анализ каналов)", url: "https://telemetr.io"}],
-            33: [{name: "Instaloader", url: "https://github.com/instaloader/instaloader"}, {name: "Picuki", url: "https://www.picuki.com"}],
-            41: [{name: "Have I Been Pwned", url: "https://haveibeenpwned.com"}, {name: "HIBP API", url: "https://haveibeenpwned.com/API/v3"}],
-            42: [{name: "DeHashed", url: "https://www.dehashed.com"}, {name: "Snusbase", url: "https://snusbase.com"}],
-            43: [{name: "LeakCheck", url: "https://leakcheck.io"}, {name: "Intelligence X", url: "https://intelx.io"}],
-            51: [{name: "🚀 Oasis Search (наш бот)", url: "https://t.me/ListopadovSearchBot"}, {name: "panarchist", url: "https://t.me/panarchist"}],
-            52: [{name: "LeakOSINT Bot (утечки)", url: "https://t.me/LeakOSINT0Bot"}],
-            53: [{name: "Vektor Bot (поиск)", url: "https://t.me/VektorSearchBot"}],
-            54: [{name: "FunStat Bot (статистика)", url: "https://t.me/FunStatBot"}],
-            55: [{name: "Sherlock Bot (поиск по нику)", url: "https://t.me/SherlockSearchBot"}],
-            61: [{name: "Shodan (поиск серверов)", url: "https://shodan.io"}, {name: "Censys", url: "https://censys.io"}],
-            62: [{name: "Maltego (графы связей)", url: "https://www.maltego.com"}, {name: "SpiderFoot", url: "https://github.com/smicallef/spiderfoot"}],
-            63: [{name: "Google Dorks (шпаргалка)", url: "https://www.exploit-db.com/google-hacking-database"}, {name: "DorkSearch", url: "https://dorksearch.com"}]
-        };
-
-        function showModal(title, id) {
-            document.getElementById('modal-title').innerText = title;
-            var body = document.getElementById('modal-body');
-            body.innerHTML = '';
-            var items = toolsData[id] || [];
-            if (items.length === 0) {
-                body.innerHTML = '<div style="color: #888; font-size: 13px;">Инструменты пока не добавлены.</div>';
-            } else {
-                items.forEach(item => {
-                    body.innerHTML += `<div class="tool-item"><a href="${item.url}" target="_blank">${item.name}</a><span class="tool-link">перейти ↗</span></div>`;
-                });
-            }
-            document.getElementById('info-modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('info-modal').style.display = 'none';
-        }
-    </script>
 </body>
 </html>
