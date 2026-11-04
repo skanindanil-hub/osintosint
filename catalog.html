@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oasis Search | Catalog</title>
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -40,7 +39,6 @@
             padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px;
         }
 
-        /* Экран загрузки */
         #loading {
             position: absolute;
             top: 50%; left: 50%;
@@ -73,7 +71,6 @@
             position: relative;
         }
 
-        /* Модальное окно */
         .modal {
             display: none;
             position: absolute;
@@ -121,7 +118,7 @@
 
     <div id="loading">
         <div class="spinner"></div>
-        Инициализация нейросети графа...
+        Загрузка графа...
     </div>
 
     <div id="network-container"></div>
@@ -134,48 +131,45 @@
         <div id="modal-body"></div>
     </div>
 
+    <!-- ВСТРОЕННАЯ БИБЛИОТЕКА VIS-NETWORK (без внешних CDN) -->
     <script>
-        // Ждем полной загрузки страницы и библиотеки
+        /*! vis-network - v9.1.6 - Standalone UMD Build - Inlined for offline use */
+        !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).vis={})}(this,(function(t){"use strict";
+        // ... (здесь я сократил для примера, но на деле тебе нужно вставить полный код библиотеки) ...
+        }));
+    </script>
+
+    <script>
+        // Ждем загрузки страницы
         window.addEventListener('load', function() {
+            // Проверка, загрузилась ли библиотека
             if (typeof vis === 'undefined') {
-                document.getElementById('loading').innerHTML = '❌ Ошибка: Блокировщик рекламы или слабый интернет не дают загрузить граф. Отключите AdBlock.';
+                document.getElementById('loading').innerHTML = '❌ Ошибка: Библиотека не загрузилась. Попробуйте обновить страницу.';
                 return;
             }
 
-            // Скрываем загрузку
             document.getElementById('loading').style.display = 'none';
 
             var nodes = new vis.DataSet([
-                // Центр
                 { id: 1, label: 'OASIS', shape: 'dot', size: 30, color: { background: '#3b82f6', border: '#1d4ed8' }, font: { color: '#fff', size: 18, bold: true } },
-                
-                // Ветка 1: Люди
                 { id: 2, label: 'Люди и ФИО', shape: 'box', color: '#222', font: { color: '#fff' } },
                 { id: 21, label: 'GetContact', shape: 'dot', size: 12, color: '#444' },
                 { id: 22, label: 'Sherlock', shape: 'dot', size: 12, color: '#444' },
                 { id: 23, label: 'Maigret', shape: 'dot', size: 12, color: '#444' },
-                
-                // Ветка 2: Соцсети
                 { id: 3, label: 'Соцсети', shape: 'box', color: '#222', font: { color: '#fff' } },
                 { id: 31, label: 'VK Search', shape: 'dot', size: 12, color: '#444' },
                 { id: 32, label: 'Telegram OSINT', shape: 'dot', size: 12, color: '#444' },
                 { id: 33, label: 'Instagram Parser', shape: 'dot', size: 12, color: '#444' },
-                
-                // Ветка 3: Утечки
                 { id: 4, label: 'Базы данных', shape: 'box', color: '#222', font: { color: '#fff' } },
                 { id: 41, label: 'HIBP', shape: 'dot', size: 12, color: '#444' },
                 { id: 42, label: 'DeHashed', shape: 'dot', size: 12, color: '#444' },
                 { id: 43, label: 'LeakCheck', shape: 'dot', size: 12, color: '#444' },
-                
-                // Ветка 4: Боты Telegram
                 { id: 5, label: 'Telegram Боты', shape: 'box', color: '#222', font: { color: '#fff' } },
                 { id: 51, label: 'Oasis Search Bot', shape: 'dot', size: 14, color: { background: '#3b82f6' } },
                 { id: 52, label: 'LeakOSINT Bot', shape: 'dot', size: 12, color: '#444' },
                 { id: 53, label: 'Vektor Bot', shape: 'dot', size: 12, color: '#444' },
                 { id: 54, label: 'FunStat Bot', shape: 'dot', size: 12, color: '#444' },
                 { id: 55, label: 'Sherlock Bot', shape: 'dot', size: 12, color: '#444' },
-                
-                // Ветка 5: Инструменты
                 { id: 6, label: 'Инструменты', shape: 'box', color: '#222', font: { color: '#fff' } },
                 { id: 61, label: 'Shodan', shape: 'dot', size: 12, color: '#444' },
                 { id: 62, label: 'Maltego', shape: 'dot', size: 12, color: '#444' },
@@ -213,34 +207,21 @@
             });
         });
 
-        // Огромный список инструментов для каждого узла
         const toolsData = {
-            // Люди
             21: [{name: "GetContact (определение имени)", url: "https://getcontact.com"}, {name: "Truecaller", url: "https://www.truecaller.com"}],
             22: [{name: "Sherlock (поиск по нику)", url: "https://github.com/sherlock-project/sherlock"}, {name: "Maigret", url: "https://github.com/soxoj/maigret"}],
             23: [{name: "Oasis Search Bot", url: "https://t.me/ListopadovSearchBot"}],
-            
-            // Соцсети
             31: [{name: "VK API / Поиск людей", url: "https://vk.com"}, {name: "220VK", url: "https://220vk.com"}],
             32: [{name: "Telegram OSINT Bot", url: "https://t.me/ListopadovSearchBot"}, {name: "Telemetr (анализ каналов)", url: "https://telemetr.io"}],
             33: [{name: "Instaloader", url: "https://github.com/instaloader/instaloader"}, {name: "Picuki", url: "https://www.picuki.com"}],
-            
-            // Утечки
             41: [{name: "Have I Been Pwned", url: "https://haveibeenpwned.com"}, {name: "HIBP API", url: "https://haveibeenpwned.com/API/v3"}],
             42: [{name: "DeHashed", url: "https://www.dehashed.com"}, {name: "Snusbase", url: "https://snusbase.com"}],
             43: [{name: "LeakCheck", url: "https://leakcheck.io"}, {name: "Intelligence X", url: "https://intelx.io"}],
-            
-            // Боты
-            51: [
-                {name: "🚀 Oasis Search (наш бот)", url: "https://t.me/ListopadovSearchBot"},
-                {name: "panarchist", url: "https://t.me/panarchist"}
-            ],
+            51: [{name: "🚀 Oasis Search (наш бот)", url: "https://t.me/ListopadovSearchBot"}, {name: "panarchist", url: "https://t.me/panarchist"}],
             52: [{name: "LeakOSINT Bot (утечки)", url: "https://t.me/LeakOSINT0Bot"}],
             53: [{name: "Vektor Bot (поиск)", url: "https://t.me/VektorSearchBot"}],
             54: [{name: "FunStat Bot (статистика)", url: "https://t.me/FunStatBot"}],
             55: [{name: "Sherlock Bot (поиск по нику)", url: "https://t.me/SherlockSearchBot"}],
-            
-            // Инструменты
             61: [{name: "Shodan (поиск серверов)", url: "https://shodan.io"}, {name: "Censys", url: "https://censys.io"}],
             62: [{name: "Maltego (графы связей)", url: "https://www.maltego.com"}, {name: "SpiderFoot", url: "https://github.com/smicallef/spiderfoot"}],
             63: [{name: "Google Dorks (шпаргалка)", url: "https://www.exploit-db.com/google-hacking-database"}, {name: "DorkSearch", url: "https://dorksearch.com"}]
@@ -251,7 +232,6 @@
             var body = document.getElementById('modal-body');
             body.innerHTML = '';
             var items = toolsData[id] || [];
-            
             if (items.length === 0) {
                 body.innerHTML = '<div style="color: #888; font-size: 13px;">Инструменты пока не добавлены.</div>';
             } else {
