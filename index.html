@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oasis Digital — Поиск информации по открытым источникам</title>
-    <meta name="description" content="Oasis Digital — умный поиск по базам данных, телефонам, авто и контактам.">
-    
-    <!-- Фавикон (заменил на logo.jpg) -->
+    <title>Oasis Digital — Поиск информации и REST API</title>
+    <meta name="description" content="Oasis Digital — умный поиск по базам данных, телефонам, авто и контактам. Документация и тутор REST API.">
+
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,20 +27,20 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Стили для плавного появления -->
     <style>
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: translateY(24px);
+            transition: all 0.7s cubic-bezier(0.5, 0, 0, 1);
         }
         .reveal.active {
             opacity: 1;
@@ -52,108 +51,392 @@
 <body class="bg-bg text-text font-sans antialiased selection:bg-accent selection:text-white">
 
     <!-- Навигация -->
-    <nav class="border-b border-border sticky top-0 bg-bg/80 backdrop-blur-md z-40 reveal active">
-        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <!-- Заменил на logo.jpg -->
-                <img src="logo.jpg" alt="Oasis Digital" class="w-8 h-8 object-contain">
-                <span class="font-bold text-lg tracking-wide">Oasis Digital</span>
+    <nav class="border-b border-border sticky top-0 bg-bg/85 backdrop-blur-md z-40 reveal active">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+            <a href="#" class="flex items-center gap-3 shrink-0">
+                <img src="logo.jpg" alt="Oasis Digital" class="w-8 h-8 object-contain rounded-md">
+                <span class="font-bold text-base sm:text-lg tracking-wide">Oasis Digital</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-5 text-sm text-muted">
+                <a href="#how-it-works" class="hover:text-white transition-colors">Как работает</a>
+                <a href="#api-docs" class="hover:text-white transition-colors">API Документация</a>
+                <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                <button onclick="openMirrors()" class="hover:text-white transition-colors cursor-pointer">Зеркала</button>
+                <button onclick="openOwners()" class="hover:text-white transition-colors cursor-pointer">Владельцы</button>
             </div>
-            <div class="flex items-center gap-4">
-                <button onclick="openOwners()" class="text-sm text-muted hover:text-white transition-colors hidden sm:block">Владельцы</button>
-                <a href="https://t.me/oasis_digital_bot" target="_blank" class="bg-white text-black text-sm font-medium px-4 py-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2">
-                    <i class="ph ph-telegram-logo text-lg"></i>
-                    Открыть бота
+
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="#api-docs" class="text-xs sm:text-sm border border-border bg-card text-white px-3 sm:px-3.5 py-2 rounded-full hover:border-accent transition-colors">
+                    REST API
+                </a>
+                <a href="https://t.me/OasisDigitalro_bot" target="_blank" class="bg-white text-black text-xs sm:text-sm font-medium px-3.5 sm:px-4 py-2 rounded-full hover:bg-gray-200 transition-colors flex items-center gap-1.5">
+                    <i class="ph ph-telegram-logo text-base sm:text-lg"></i>
+                    <span>Открыть бота</span>
                 </a>
             </div>
         </div>
     </nav>
 
     <!-- Главный блок -->
-    <main class="max-w-5xl mx-auto px-4 pt-20 pb-24 text-center">
-        
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm text-muted mb-8 reveal">
-            <i class="ph ph-shield-check text-accent"></i>
-            Проверка информации по открытым источникам
+    <main class="max-w-5xl mx-auto px-4 pt-16 pb-24">
+        <div class="text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm text-muted mb-8 reveal">
+                <i class="ph ph-shield-check text-accent"></i>
+                Проверка информации по открытым источникам и REST API
+            </div>
+
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6 reveal" style="transition-delay: 80ms;">
+                Поиск людей,<br>авто и контактов<br>за пару секунд
+            </h1>
+
+            <p class="text-muted text-base md:text-xl max-w-2xl mx-auto mb-10 reveal" style="transition-delay: 160ms;">
+                Введите номер телефона, никнейм, почту, ФИО или госномер автомобиля. Бот и REST API проверят источники и выдадут структурированный результат со ссылкой на веб-отчёт.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="transition-delay: 240ms;">
+                <a href="https://t.me/OasisDigitalro_bot" target="_blank" class="w-full sm:w-auto bg-white text-black font-semibold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
+                    <i class="ph ph-telegram-logo text-xl"></i>
+                    Бот в Telegram
+                </a>
+                <a href="#api-docs" class="w-full sm:w-auto border border-accent/50 bg-card text-white font-semibold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-border transition-colors">
+                    <i class="ph ph-code text-xl text-accent"></i>
+                    Документация API
+                </a>
+                <button onclick="openMirrors()" class="w-full sm:w-auto border border-border bg-card text-white font-semibold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-border transition-colors cursor-pointer">
+                    <i class="ph ph-monitor text-xl"></i>
+                    Зеркала
+                </button>
+            </div>
+
+            <!-- Блок с картинкой -->
+            <div class="mt-16 max-w-4xl mx-auto reveal">
+                <img src="IMG_20261115_023302_975.jpg" alt="Oasis Digital Bot Interface" class="w-full h-auto rounded-2xl border border-border opacity-90 shadow-2xl">
+            </div>
+
+            <!-- Описание возможностей -->
+            <div class="mt-16 max-w-4xl mx-auto text-left grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="p-6 bg-card border border-border rounded-2xl reveal">
+                    <i class="ph ph-user-focus text-2xl text-accent mb-3 block"></i>
+                    <h3 class="text-lg font-semibold text-white mb-2">Поиск по личности</h3>
+                    <p class="text-sm text-muted">Находите профили по ФИО, дате рождения, паспорту, ИНН или СНИЛС.</p>
+                </div>
+                <div class="p-6 bg-card border border-border rounded-2xl reveal" style="transition-delay: 80ms;">
+                    <i class="ph ph-phone text-2xl text-accent mb-3 block"></i>
+                    <h3 class="text-lg font-semibold text-white mb-2">Анализ контактов</h3>
+                    <p class="text-sm text-muted">Определяйте оператора, регион регистрации, записные книги и связанные номера.</p>
+                </div>
+                <div class="p-6 bg-card border border-border rounded-2xl reveal">
+                    <i class="ph ph-car text-2xl text-accent mb-3 block"></i>
+                    <h3 class="text-lg font-semibold text-white mb-2">Транспорт</h3>
+                    <p class="text-sm text-muted">Проверяйте авто по госномеру, VIN или данным владельца.</p>
+                </div>
+                <div class="p-6 bg-card border border-border rounded-2xl reveal" style="transition-delay: 80ms;">
+                    <i class="ph ph-globe text-2xl text-accent mb-3 block"></i>
+                    <h3 class="text-lg font-semibold text-white mb-2">Цифровые следы</h3>
+                    <p class="text-sm text-muted">Ищите аккаунты в Telegram, email, IP-адреса и связанные никнеймы.</p>
+                </div>
+            </div>
         </div>
 
-        <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6 reveal" style="transition-delay: 100ms;">
-            Поиск людей,<br>авто и контактов<br>за пару секунд
-        </h1>
-
-        <p class="text-muted text-lg md:text-xl max-w-2xl mx-auto mb-10 reveal" style="transition-delay: 200ms;">
-            Введите номер телефона, никнейм, почту, ФИО или госномер автомобиля. Бот проверит базы и выдаст структурированный результат со всеми найденными связями.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="transition-delay: 300ms;">
-            <a href="https://t.me/oasis_digital_bot" target="_blank" class="w-full sm:w-auto bg-white text-black font-semibold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-                <i class="ph ph-telegram-logo text-xl"></i>
-                Бот в Telegram
-            </a>
-            <button onclick="openMirrors()" class="w-full sm:w-auto border border-border bg-card text-white font-semibold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-border transition-colors cursor-pointer">
-                <i class="ph ph-monitor text-xl"></i>
-                Зеркала
-            </button>
-        </div>
-
-        <!-- Блок с картинкой (убедись, что файл называется так же) -->
-        <div class="mt-20 max-w-4xl mx-auto reveal">
-            <img src="IMG_20261115_023302_975.jpg" alt="Oasis Digital Bot Interface" class="w-full h-auto rounded-2xl border border-border opacity-90 shadow-2xl">
-        </div>
-
-        <!-- Описание возможностей -->
-        <div class="mt-20 max-w-3xl mx-auto text-left grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-6 bg-card border border-border rounded-2xl reveal">
-                <i class="ph ph-user-focus text-2xl text-accent mb-3 block"></i>
-                <h3 class="text-lg font-semibold text-white mb-2">Поиск по личности</h3>
-                <p class="text-sm text-muted">Находите профили по ФИО, дате рождения, паспорту, ИНН или СНИЛС.</p>
+        <!-- ТУТОР: ТРИ ШАГА ДО РЕЗУЛЬТАТА -->
+        <section id="how-it-works" class="mt-24 pt-6 reveal">
+            <div class="text-center mb-10">
+                <div class="inline-block text-[11px] font-semibold tracking-widest uppercase text-accent bg-accent/10 border border-accent/25 px-3 py-1 rounded-full mb-3">
+                    ТУТОР · БЫСТРЫЙ СТАРТ
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">Три шага до результата</h2>
+                <p class="text-muted text-sm md:text-base max-w-xl mx-auto">
+                    Запуск в Telegram-боте или прямое подключение через REST API для ваших скриптов, CRM и сервисов.
+                </p>
             </div>
-            <div class="p-6 bg-card border border-border rounded-2xl reveal" style="transition-delay: 100ms;">
-                <i class="ph ph-phone text-2xl text-accent mb-3 block"></i>
-                <h3 class="text-lg font-semibold text-white mb-2">Анализ контактов</h3>
-                <p class="text-sm text-muted">Определяйте оператора, регион регистрации и связанные номера.</p>
-            </div>
-            <div class="p-6 bg-card border border-border rounded-2xl reveal">
-                <i class="ph ph-car text-2xl text-accent mb-3 block"></i>
-                <h3 class="text-lg font-semibold text-white mb-2">Транспорт</h3>
-                <p class="text-sm text-muted">Проверяйте авто по госномеру, VIN или номеру кузова.</p>
-            </div>
-            <div class="p-6 bg-card border border-border rounded-2xl reveal" style="transition-delay: 100ms;">
-                <i class="ph ph-globe text-2xl text-accent mb-3 block"></i>
-                <h3 class="text-lg font-semibold text-white mb-2">Цифровые следы</h3>
-                <p class="text-sm text-muted">Ищите аккаунты в соцсетях, Telegram, email и на сайтах.</p>
-            </div>
-        </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="bg-card border border-border rounded-2xl p-6">
+                    <div class="text-xs font-mono font-bold text-accent mb-3">01</div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Получите ключ или баланс</h3>
+                    <p class="text-sm text-muted leading-relaxed">
+                        Откройте бота <span class="text-text font-medium">@OasisDigitalro_bot</span> для проверки через чат. Для интеграции по API администратор выдаёт ключ формата <code class="text-accent font-mono text-xs">OASIS-IO-...</code> с нужным лимитом запросов и скоростью.
+                    </p>
+                </div>
+
+                <div class="bg-card border border-border rounded-2xl p-6">
+                    <div class="text-xs font-mono font-bold text-accent mb-3">02</div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Отправьте запрос</h3>
+                    <p class="text-sm text-muted leading-relaxed">
+                        Передайте цель в параметре <code class="text-accent font-mono text-xs">q</code> на <code class="text-text font-mono text-xs">/api/v1/search</code> (<code class="text-text font-mono text-xs">GET</code> или <code class="text-text font-mono text-xs">POST</code>) с заголовком <code class="text-accent font-mono text-xs">X-API-Key</code> — система сама определит тип запроса (телефон, Telegram, email, авто, IP, ФИО).
+                    </p>
+                </div>
+
+                <div class="bg-card border border-border rounded-2xl p-6">
+                    <div class="text-xs font-mono font-bold text-accent mb-3">03</div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Получите JSON и веб-отчёт</h3>
+                    <p class="text-sm text-muted leading-relaxed">
+                        В ответе вернётся структурированный JSON со всеми найденными полями, <code class="text-text font-mono text-xs">report_id</code> и готовая ссылка <code class="text-accent font-mono text-xs">web_report</code> на интерактивный веб-отчёт.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ДОКУМЕНТАЦИЯ REST API -->
+        <section id="api-docs" class="mt-24 pt-6 reveal">
+            <div class="text-center mb-10">
+                <div class="inline-block text-[11px] font-semibold tracking-widest uppercase text-accent bg-accent/10 border border-accent/25 px-3 py-1 rounded-full mb-3">
+                    РАЗРАБОТЧИКАМ · REST API v1
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">Документация Oasis Digital API</h2>
+                <p class="text-muted text-sm md:text-base max-w-2xl mx-auto">
+                    Прямой программный доступ к поисковому движку Oasis Digital для интеграции в боты, панели и аналитические скрипты.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Левая колонка: Спецификация эндпоинта и параметры -->
+                <div class="lg:col-span-6 bg-card border border-border rounded-2xl p-6 space-y-6">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <span class="text-sm font-semibold text-white flex items-center gap-2">
+                            <i class="ph ph-plugs text-accent text-lg"></i>
+                            Спецификация эндпоинта
+                        </span>
+                        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-accent/15 text-accent border border-accent/30">
+                            REST API v1
+                        </span>
+                    </div>
+
+                    <div class="bg-bg border border-border rounded-xl p-3.5 flex items-center gap-3 overflow-x-auto">
+                        <span class="text-xs font-mono font-bold px-2 py-1 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
+                            GET / POST
+                        </span>
+                        <code class="text-xs sm:text-sm font-mono text-white whitespace-nowrap">
+                            https://listopadov-search-1.onrender.com/api/v1/search
+                        </code>
+                    </div>
+
+                    <div class="bg-bg border border-border rounded-xl p-4 space-y-2 text-xs text-muted leading-relaxed">
+                        <div class="text-white font-semibold text-sm flex items-center gap-2">
+                            <i class="ph ph-key text-accent"></i>
+                            Авторизация и ключ
+                        </div>
+                        <p>
+                            Ключи выдаются в формате <code class="text-accent font-mono">OASIS-IO-...</code>. Передавайте их в заголовке <code class="text-text font-mono">X-API-Key: OASIS-IO-...</code> или <code class="text-text font-mono">Authorization: Bearer OASIS-IO-...</code>.
+                        </p>
+                        <p class="text-emerald-400/90 font-medium pt-1">
+                            • Лимит скорости (req/min) и квота запросов задаются индивидуально для каждого ключа.
+                        </p>
+                    </div>
+
+                    <!-- Таблица параметров -->
+                    <div>
+                        <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Параметры и заголовки</div>
+                        <div class="divide-y divide-border border border-border rounded-xl overflow-hidden bg-bg text-xs">
+                            <div class="p-3.5 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                                <div>
+                                    <code class="font-mono text-white font-semibold">X-API-Key</code>
+                                    <span class="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30">Обязательно</span>
+                                </div>
+                                <div class="text-muted sm:text-right sm:max-w-xs">
+                                    Ключ доступа <code class="font-mono text-accent">OASIS-IO-...</code>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                                <div>
+                                    <code class="font-mono text-white font-semibold">q</code>
+                                    <span class="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30">Обязательно</span>
+                                </div>
+                                <div class="text-muted sm:text-right sm:max-w-xs">
+                                    Поисковый запрос: телефон, <code class="font-mono">@username</code>, TG ID, email, VIN, госномер, IP или ФИО.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Коды ответов -->
+                    <div>
+                        <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Коды статусов</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div class="bg-bg border border-border rounded-lg p-2.5"><span class="text-emerald-400">200</span> — Успешный поиск</div>
+                            <div class="bg-bg border border-border rounded-lg p-2.5"><span class="text-amber-400">401</span> — Неверный / отозван ключ</div>
+                            <div class="bg-bg border border-border rounded-lg p-2.5"><span class="text-amber-400">429</span> — Лимит скорости / квоты</div>
+                            <div class="bg-bg border border-border rounded-lg p-2.5"><span class="text-red-400">503</span> — API временно отключён</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка: Примеры кода и пример JSON -->
+                <div class="lg:col-span-6 bg-card border border-border rounded-2xl p-6 space-y-5">
+                    <div class="flex items-center justify-between gap-2 flex-wrap border-b border-border pb-3">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <button type="button" onclick="selectLang('curl', this)" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-accent/20 text-white border border-accent/40 cursor-pointer">
+                                cURL
+                            </button>
+                            <button type="button" onclick="selectLang('python', this)" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-bg text-muted hover:text-white border border-border cursor-pointer">
+                                Python
+                            </button>
+                            <button type="button" onclick="selectLang('js', this)" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-bg text-muted hover:text-white border border-border cursor-pointer">
+                                JavaScript
+                            </button>
+                            <button type="button" onclick="selectLang('php', this)" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-bg text-muted hover:text-white border border-border cursor-pointer">
+                                PHP
+                            </button>
+                        </div>
+
+                        <button type="button" onclick="copyCodeSnippet()" id="copyCodeBtn" class="text-xs text-muted hover:text-white flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-bg transition-colors cursor-pointer">
+                            <i class="ph ph-copy"></i>
+                            <span>Копировать</span>
+                        </button>
+                    </div>
+
+                    <pre id="codeBlock" class="bg-bg border border-border rounded-xl p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed"></pre>
+
+                    <div>
+                        <div class="text-xs font-semibold text-muted mb-2 flex items-center justify-between">
+                            <span>Пример ответа JSON (200 OK)</span>
+                            <span class="font-mono text-[11px] text-accent">application/json</span>
+                        </div>
+                        <pre class="bg-bg border border-border rounded-xl p-4 text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">{
+  "ok": true,
+  "provider": "Oasis Digital",
+  "report_id": "a1b2c3d4",
+  "web_report": "https://listopadov-search-1.onrender.com/r/...",
+  "data": {
+    "query": "79991234567",
+    "query_type": "phone",
+    "fio": "Иванов Иван Иванович",
+    "phone_number": "79991234567",
+    "operator": "МТС",
+    "region": "Москва",
+    "views_count": 5
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Консоль тестирования API -->
+            <div class="mt-6 bg-card border border-border rounded-2xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <h3 class="text-base font-semibold text-white">Консоль тестирования API</h3>
+                    </div>
+                    <span class="text-xs text-muted">Прямой тестовый запрос к серверу Oasis Digital</span>
+                </div>
+
+                <form onsubmit="runApiConsole(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <div class="md:col-span-5">
+                        <label class="block text-[11px] text-muted mb-1">API Ключ (OASIS-IO-...)</label>
+                        <input id="consoleKey" type="text" required placeholder="OASIS-IO-..." class="w-full bg-bg border border-border rounded-xl px-3.5 py-2.5 text-xs font-mono text-white placeholder:text-muted/60 focus:outline-none focus:border-accent">
+                    </div>
+
+                    <div class="md:col-span-4">
+                        <label class="block text-[11px] text-muted mb-1">Поисковый запрос (q)</label>
+                        <input id="consoleQuery" type="text" required placeholder="Например: 79991234567, @durov или email" class="w-full bg-bg border border-border rounded-xl px-3.5 py-2.5 text-xs font-mono text-white placeholder:text-muted/60 focus:outline-none focus:border-accent">
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label class="block text-[11px] text-muted mb-1">Метод</label>
+                        <select id="consoleMethod" class="w-full bg-bg border border-border rounded-xl px-2.5 py-2.5 text-xs font-mono text-white focus:outline-none focus:border-accent">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2 flex items-end">
+                        <button type="submit" id="consoleSubmitBtn" class="w-full bg-white text-black font-semibold text-xs py-2.5 px-4 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="ph ph-paper-plane-right text-sm"></i>
+                            <span>Отправить</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="consoleResultWrap" class="hidden mt-4 space-y-2">
+                    <div class="flex items-center justify-between text-xs flex-wrap gap-2">
+                        <span id="consoleMeta" class="font-mono text-muted"></span>
+                        <a id="consoleWebReportLink" href="#" target="_blank" class="hidden text-accent hover:underline font-medium">
+                            Открыть веб-отчёт ↗
+                        </a>
+                    </div>
+                    <pre id="consoleOutput" class="bg-bg border border-border rounded-xl p-4 text-xs font-mono text-slate-200 overflow-x-auto max-h-96 leading-relaxed"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЧАСТЫЕ ВОПРОСЫ (FAQ) -->
+        <section id="faq" class="mt-24 pt-6 reveal">
+            <div class="text-center mb-10">
+                <div class="inline-block text-[11px] font-semibold tracking-widest uppercase text-accent bg-accent/10 border border-accent/25 px-3 py-1 rounded-full mb-3">
+                    ВОПРОСЫ И ОТВЕТЫ
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">Частые вопросы</h2>
+                <p class="text-muted text-sm md:text-base max-w-xl mx-auto">
+                    Ответы на частые вопросы о поиске, ключах REST API и отчётах.
+                </p>
+            </div>
+
+            <div class="max-w-3xl mx-auto space-y-3 text-left">
+                <details class="bg-card border border-border rounded-2xl p-5 group">
+                    <summary class="font-semibold text-white text-sm sm:text-base cursor-pointer list-none flex items-center justify-between gap-4">
+                        <span>Как получить API-ключ OASIS-IO-... и задать лимит?</span>
+                        <i class="ph ph-plus text-accent text-lg group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-muted mt-3 leading-relaxed">
+                        Ключи создаются через админ-панель бота или команду администратора с указанием лимита запросов (включая безлимит) и лимита запросов в минуту. Связаться по выдаче доступа можно через <span class="text-text font-medium">@anodoxx</span> или в боте <span class="text-text font-medium">@OasisDigitalro_bot</span>.
+                    </p>
+                </details>
+
+                <details class="bg-card border border-border rounded-2xl p-5 group">
+                    <summary class="font-semibold text-white text-sm sm:text-base cursor-pointer list-none flex items-center justify-between gap-4">
+                        <span>Какие форматы запросов поддерживает REST API?</span>
+                        <i class="ph ph-plus text-accent text-lg group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-muted mt-3 leading-relaxed">
+                        В параметре <code class="text-accent font-mono text-xs">q</code> можно передавать номера телефонов, <code class="text-text font-mono text-xs">@username</code> и ID Telegram, email, госномер авто, VIN, IP-адрес или ФИО. Система определяет тип автоматически.
+                    </p>
+                </details>
+
+                <details class="bg-card border border-border rounded-2xl p-5 group">
+                    <summary class="font-semibold text-white text-sm sm:text-base cursor-pointer list-none flex items-center justify-between gap-4">
+                        <span>Что означает статус 503 или 429 при обращении к API?</span>
+                        <i class="ph ph-plus text-accent text-lg group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-sm text-muted mt-3 leading-relaxed">
+                        <code class="text-red-400 font-mono text-xs">503</code> означает, что доступ к API временно отключён администратором. <code class="text-amber-400 font-mono text-xs">429</code> означает превышение лимита запросов в минуту или исчерпание выделенной квоты ключа.
+                    </p>
+                </details>
+            </div>
+        </section>
     </main>
 
     <!-- Футер -->
     <footer class="border-t border-border py-12 bg-bg">
         <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-3">
-                <!-- Заменил на logo.jpg -->
-                <img src="logo.jpg" alt="Oasis Digital" class="w-8 h-8 object-contain grayscale opacity-50">
+                <img src="logo.jpg" alt="Oasis Digital" class="w-8 h-8 object-contain grayscale opacity-60 rounded-md">
                 <div>
                     <div class="font-semibold text-sm">Oasis Digital</div>
-                    <div class="text-xs text-muted">Быстрый поиск контактов и проверка информации.</div>
+                    <div class="text-xs text-muted">Быстрый поиск контактов, проверка информации и REST API.</div>
                 </div>
             </div>
-            
+
             <div class="flex flex-wrap justify-center gap-6 text-sm text-muted">
-                <button onclick="openMirrors()" class="hover:text-white transition-colors">Зеркала</button>
-                <button onclick="openOwners()" class="hover:text-white transition-colors">Владельцы</button>
-                <a href="https://t.me/oasis_digital_bot" target="_blank" class="hover:text-white transition-colors">Бот</a>
+                <a href="#how-it-works" class="hover:text-white transition-colors">Тутор</a>
+                <a href="#api-docs" class="hover:text-white transition-colors">Документация API</a>
+                <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                <button onclick="openMirrors()" class="hover:text-white transition-colors cursor-pointer">Зеркала</button>
+                <button onclick="openOwners()" class="hover:text-white transition-colors cursor-pointer">Владельцы</button>
+                <a href="https://t.me/OasisDigitalro_bot" target="_blank" class="hover:text-white transition-colors">Бот</a>
             </div>
         </div>
         <div class="max-w-5xl mx-auto px-4 mt-8 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted">
-            <div>© 2024 Oasis Digital. Все права защищены.</div>
+            <div>© 2024–2026 Oasis Digital. Все права защищены.</div>
         </div>
     </footer>
 
     <!-- Модальное окно Зеркал -->
     <div id="mirrorsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-card border border-border rounded-2xl w-full max-w-md p-6 relative">
-            <button onclick="closeMirrors()" class="absolute top-4 right-4 text-muted hover:text-white">
+            <button onclick="closeMirrors()" class="absolute top-4 right-4 text-muted hover:text-white cursor-pointer">
                 <i class="ph ph-x text-xl"></i>
             </button>
             <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
@@ -169,7 +452,7 @@
     <!-- Модальное окно Владельцев -->
     <div id="ownersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-card border border-border rounded-2xl w-full max-w-md p-6 relative">
-            <button onclick="closeOwners()" class="absolute top-4 right-4 text-muted hover:text-white">
+            <button onclick="closeOwners()" class="absolute top-4 right-4 text-muted hover:text-white cursor-pointer">
                 <i class="ph ph-x text-xl"></i>
             </button>
             <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
@@ -196,57 +479,178 @@
     </div>
 
     <script>
-        const API_BASE_URL = "https://listopadov-search.onrender.com";
+        const API_BASE_URL = "https://listopadov-search-1.onrender.com";
+        const FALLBACK_MIRRORS = ["OasisDigitalro_bot"];
 
-        // --- АНИМАЦИЯ ПРОКРУТКИ ---
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
+        const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
+                    obs.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { root: null, rootMargin: '0px', threshold: 0.08 });
 
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // --- ФУНКЦИИ ДЛЯ ЗЕРКАЛ ---
+        const SNIPPETS = {
+            curl: `curl -X GET "${API_BASE_URL}/api/v1/search?q=79991234567" \\
+  -H "X-API-Key: OASIS-IO-YOUR_KEY" \\
+  -H "Accept: application/json"`,
+
+            python: `import requests
+
+url = "${API_BASE_URL}/api/v1/search"
+headers = {"X-API-Key": "OASIS-IO-YOUR_KEY"}
+params = {"q": "79991234567"}
+
+resp = requests.get(url, headers=headers, params=params, timeout=95)
+print(resp.status_code, resp.json())`,
+
+            js: `const res = await fetch(
+  "${API_BASE_URL}/api/v1/search?q=" + encodeURIComponent("79991234567"),
+  {
+    headers: { "X-API-Key": "OASIS-IO-YOUR_KEY" }
+  }
+);
+const data = await res.json();
+console.log(data);`,
+
+            php: `<?php
+$ch = curl_init("${API_BASE_URL}/api/v1/search?q=" . urlencode("79991234567"));
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ["X-API-Key: OASIS-IO-YOUR_KEY"],
+]);
+$response = curl_exec($ch);
+curl_close($ch);
+echo $response;`
+        };
+
+        let currentLang = 'curl';
+
+        function selectLang(lang, btn) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => {
+                b.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-bg text-muted hover:text-white border border-border cursor-pointer";
+            });
+            if (btn) {
+                btn.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-accent/20 text-white border border-accent/40 cursor-pointer";
+            }
+            document.getElementById('codeBlock').textContent = SNIPPETS[lang] || SNIPPETS.curl;
+        }
+
+        async function copyCodeSnippet() {
+            const text = SNIPPETS[currentLang] || "";
+            const btn = document.getElementById('copyCodeBtn');
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.innerHTML = '<i class="ph ph-check text-emerald-400"></i><span class="text-emerald-400">Скопировано</span>';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="ph ph-copy"></i><span>Копировать</span>';
+                }, 1800);
+            } catch (_) {}
+        }
+
+        selectLang('curl');
+
+        async function runApiConsole(e) {
+            e.preventDefault();
+            const apiKey = document.getElementById('consoleKey').value.trim();
+            const query = document.getElementById('consoleQuery').value.trim();
+            const method = document.getElementById('consoleMethod').value;
+            const submitBtn = document.getElementById('consoleSubmitBtn');
+            const wrap = document.getElementById('consoleResultWrap');
+            const meta = document.getElementById('consoleMeta');
+            const out = document.getElementById('consoleOutput');
+            const webLink = document.getElementById('consoleWebReportLink');
+
+            if (!apiKey || !query) return;
+
+            wrap.classList.remove('hidden');
+            webLink.classList.add('hidden');
+            meta.textContent = "Выполняется запрос к API (до 90 сек)...";
+            out.textContent = "Ожидание ответа...";
+            submitBtn.disabled = true;
+
+            const t0 = performance.now();
+            try {
+                let response;
+                if (method === "POST") {
+                    response = await fetch(`${API_BASE_URL}/api/v1/search`, {
+                        method: "POST",
+                        headers: {
+                            "X-API-Key": apiKey,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ q: query })
+                    });
+                } else {
+                    response = await fetch(
+                        `${API_BASE_URL}/api/v1/search?q=${encodeURIComponent(query)}`,
+                        {
+                            method: "GET",
+                            headers: { "X-API-Key": apiKey }
+                        }
+                    );
+                }
+
+                const ms = Math.round(performance.now() - t0);
+                meta.textContent = `HTTP ${response.status} · ${ms} ms`;
+
+                const rawText = await response.text();
+                try {
+                    const parsed = JSON.parse(rawText);
+                    out.textContent = JSON.stringify(parsed, null, 2);
+                    if (parsed && parsed.web_report) {
+                        webLink.href = parsed.web_report;
+                        webLink.classList.remove('hidden');
+                    }
+                } catch (_) {
+                    out.textContent = rawText;
+                }
+            } catch (err) {
+                const ms = Math.round(performance.now() - t0);
+                meta.textContent = `Ошибка сети · ${ms} ms`;
+                out.textContent = String(err);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        function renderMirrors(listContainer, mirrors) {
+            if (!mirrors || mirrors.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-muted py-4">Пока нет доступных зеркал.</div>';
+                return;
+            }
+            listContainer.innerHTML = mirrors.map(bot => {
+                const clean = String(bot).replace(/^@/, '');
+                return `
+                    <a href="https://t.me/${clean}" target="_blank" class="flex items-center justify-between bg-bg border border-border p-4 rounded-xl hover:border-accent transition-colors group">
+                        <div class="flex items-center gap-3">
+                            <i class="ph ph-telegram-logo text-2xl text-[#229ED9]"></i>
+                            <span class="font-medium text-white group-hover:text-accent transition-colors">@${clean}</span>
+                        </div>
+                        <i class="ph ph-arrow-right text-muted group-hover:text-white transition-colors"></i>
+                    </a>
+                `;
+            }).join('');
+        }
+
         async function openMirrors() {
             const modal = document.getElementById('mirrorsModal');
+            const listContainer = document.getElementById('mirrorsList');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
-            const listContainer = document.getElementById('mirrorsList');
             listContainer.innerHTML = '<div class="text-center text-muted py-4 animate-pulse">Загрузка зеркал...</div>';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/mirrors`);
                 if (!response.ok) throw new Error('Network error');
                 const data = await response.json();
-                
-                if (data.mirrors && data.mirrors.length > 0) {
-                    listContainer.innerHTML = data.mirrors.map(bot => `
-                        <a href="https://t.me/${bot}" target="_blank" class="flex items-center justify-between bg-bg border border-border p-4 rounded-xl hover:border-accent transition-colors group">
-                            <div class="flex items-center gap-3">
-                                <i class="ph ph-telegram-logo text-2xl text-[#229ED9]"></i>
-                                <span class="font-medium text-white group-hover:text-accent transition-colors">@${bot}</span>
-                            </div>
-                            <i class="ph ph-arrow-right text-muted group-hover:text-white transition-colors"></i>
-                        </a>
-                    `).join('');
-                } else {
-                    listContainer.innerHTML = '<div class="text-center text-muted py-4">Пока нет доступных зеркал.</div>';
-                }
+                renderMirrors(listContainer, data.mirrors || FALLBACK_MIRRORS);
             } catch (error) {
-                listContainer.innerHTML = '<div class="text-center text-red-500 py-4 text-sm">Не удалось загрузить список.<br>Попробуйте позже.</div>';
+                renderMirrors(listContainer, FALLBACK_MIRRORS);
             }
         }
 
@@ -256,7 +660,6 @@
             modal.classList.remove('flex');
         }
 
-        // --- ФУНКЦИИ ДЛЯ ВЛАДЕЛЬЦЕВ ---
         function openOwners() {
             const modal = document.getElementById('ownersModal');
             modal.classList.remove('hidden');
